@@ -1,0 +1,75 @@
+/*
+ * FILE: Leaderboard.module.css
+ * PURPOSE: Leaderboard page styles — rankings table, top 3 podium, filter tabs.
+ * USED BY: src/app/leaderboard/page.tsx
+ */
+
+.page { padding: var(--space-8) 0 var(--space-16); }
+.inner { max-width: 900px; margin: 0 auto; padding: 0 var(--space-4); }
+
+.header { text-align: center; margin-bottom: var(--space-8); }
+.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
+.subtitle { color: var(--color-text-secondary); }
+
+/* Filter tabs */
+.filters { display: flex; justify-content: center; gap: var(--space-2); margin-bottom: var(--space-8); flex-wrap: wrap; }
+.filterBtn {
+  padding: var(--space-2) var(--space-4); font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium); border-radius: var(--radius-full);
+  background: var(--color-bg-card); border: 1px solid var(--color-border);
+  color: var(--color-text-secondary); transition: all var(--transition-fast); cursor: pointer;
+}
+.filterBtn:hover { border-color: var(--color-primary-lighter); color: var(--color-primary); }
+.filterBtnActive { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+/* Top 3 podium */
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: var(--space-4); margin-bottom: var(--space-8); }
+.podiumItem { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.podiumAvatar {
+  width: 4rem; height: 4rem; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: var(--font-weight-bold); font-size: 1.25rem;
+}
+.podiumFirst .podiumAvatar { width: 5rem; height: 5rem; font-size: 1.5rem; }
+.podiumRank {
+  font-family: var(--font-family-stats); font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+.podiumName { font-weight: var(--font-weight-medium); font-size: var(--font-size-small); }
+.podiumXP { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
+.podiumMedal { font-size: 1.5rem; }
+
+/* Rankings table */
+.table {
+  width: 100%; background: var(--color-bg-card); border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl); overflow: hidden;
+}
+.tableRow {
+  display: flex; align-items: center; padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background var(--transition-fast);
+}
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background: var(--color-bg-card-hover); }
+.tableRowSelf { background: var(--color-primary-lightest); }
+:global(.dark) .tableRowSelf { background: rgba(129, 140, 248, 0.08); }
+
+.rank {
+  width: 3rem; font-family: var(--font-family-stats);
+  font-weight: var(--font-weight-bold); font-size: var(--font-size-small);
+  color: var(--color-text-tertiary); text-align: center; flex-shrink: 0;
+}
+.rankTop { color: var(--color-accent); }
+
+.userAvatar {
+  width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: var(--font-size-xsmall); font-weight: var(--font-weight-bold);
+  flex-shrink: 0; margin-right: var(--space-3);
+}
+.userName { font-weight: var(--font-weight-medium); font-size: var(--font-size-small); flex: 1; }
+.userLevel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); width: 4rem; text-align: center; }
+.userXP {
+  font-family: var(--font-family-stats); font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold); color: var(--color-primary); width: 5rem; text-align: right;
+}

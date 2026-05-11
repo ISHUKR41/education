@@ -1,0 +1,372 @@
+/*
+ * FILE: Dashboard.module.css
+ * PURPOSE: Dashboard page styles — stats cards, streak widget, level progress,
+ *          activity graph, and quick action cards.
+ * USED BY: src/app/dashboard/page.tsx
+ */
+
+.page {
+  padding: var(--space-8) 0 var(--space-16);
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+.inner {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 768px) { .inner { padding: 0 var(--space-6); } }
+
+/* Welcome header */
+.welcomeRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .welcomeRow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.welcomeTitle {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+}
+
+.welcomeSub {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.levelBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Stats grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .statsGrid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.statCardIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+}
+
+.statCardValue {
+  font-family: var(--font-family-stats);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.statCardLabel {
+  font-size: var(--font-size-xsmall);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Main grid: two columns */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .mainGrid { grid-template-columns: 2fr 1fr; }
+}
+
+/* Card component */
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-4);
+}
+
+.columnStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* XP Progress bar */
+.xpBar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.xpBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: var(--radius-full);
+  transition: width 1s ease;
+}
+
+.xpInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xsmall);
+  color: var(--color-text-tertiary);
+}
+
+/* Streak calendar grid */
+.streakGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: var(--space-4);
+}
+
+.streakDay {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-tertiary);
+  transition: background var(--transition-fast);
+}
+
+.streakDayActive {
+  background: var(--color-success);
+}
+
+.streakDayToday {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.streakDayMissed {
+  background: var(--color-danger-light);
+}
+
+/* Quick actions */
+.quickActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .quickActions { grid-template-columns: repeat(2, 1fr); }
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.actionCard:hover {
+  border-color: var(--color-primary-lighter);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.actionIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.actionIconlearn { background: #EFF6FF; color: #2563EB; }
+.actionIconbattle { background: #FEF2F2; color: #DC2626; }
+.actionIconcode { background: #ECFDF5; color: #059669; }
+.actionIconcommunity { background: #F5F3FF; color: #7C3AED; }
+
+.actionArrow {
+  margin-left: auto;
+  color: var(--color-text-tertiary);
+}
+
+.actionTitle {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+}
+
+.actionDesc {
+  font-size: var(--font-size-xsmall);
+  color: var(--color-text-tertiary);
+}
+
+/* Recent activity list */
+.activityList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+}
+
+.activityItem:hover {
+  background: var(--color-bg-secondary);
+}
+
+.activityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.activityText {
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.activityTime {
+  font-size: var(--font-size-xsmall);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+.streakIcon {
+  color: var(--color-accent);
+}
+
+.errorState {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.errorState svg {
+  color: var(--color-danger);
+  flex-shrink: 0;
+}
+
+.errorState h1 {
+  font-size: var(--font-size-h4);
+  margin-bottom: var(--space-1);
+}
+
+.errorState p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+}
+
+.errorAction {
+  margin-left: auto;
+  padding: var(--space-2) var(--space-4);
+  color: white;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+}
+
+.skeletonHeader,
+.skeletonCard,
+.skeletonBlock {
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonHeader {
+  height: 4.75rem;
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-xl);
+}
+
+.skeletonCard {
+  min-height: 9rem;
+}
+
+.skeletonBlock {
+  min-height: 16rem;
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 640px) {
+  .errorState {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .errorAction {
+    margin-left: 0;
+  }
+}

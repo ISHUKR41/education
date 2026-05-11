@@ -1,0 +1,64 @@
+/*
+ * FILE: Events.module.css
+ * PURPOSE: Events page styles — event cards with date, status, and registration.
+ * USED BY: src/app/events/page.tsx
+ */
+
+.page { padding: var(--space-8) 0 var(--space-16); }
+.inner { max-width: var(--max-content-width); margin: 0 auto; padding: 0 var(--space-4); }
+@media (min-width: 768px) { .inner { padding: 0 var(--space-6); } }
+
+.header { margin-bottom: var(--space-8); }
+.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
+.subtitle { font-size: var(--font-size-body); color: var(--color-text-secondary); }
+
+.eventGrid {
+  display: grid; grid-template-columns: 1fr; gap: var(--space-6);
+}
+@media (min-width: 768px) { .eventGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .eventGrid { grid-template-columns: repeat(3, 1fr); } }
+
+.eventCard {
+  display: flex; flex-direction: column; background: var(--color-bg-card);
+  border: 1px solid var(--color-border); border-radius: var(--radius-xl);
+  overflow: hidden; box-shadow: var(--shadow-sm); transition: all var(--transition-normal);
+}
+.eventCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+.eventBanner {
+  height: 140px; display: flex; align-items: center; justify-content: center;
+  color: white; position: relative;
+}
+.eventBannerIcon { opacity: 0.2; position: absolute; }
+.eventBannerTitle {
+  position: relative; z-index: 1; font-family: var(--font-family-heading);
+  font-size: var(--font-size-h3); font-weight: var(--font-weight-bold); text-align: center;
+  padding: 0 var(--space-4);
+}
+
+.eventBody { padding: var(--space-5); flex: 1; display: flex; flex-direction: column; }
+.eventDesc { font-size: var(--font-size-small); color: var(--color-text-secondary); margin-bottom: var(--space-4); line-height: var(--line-height-relaxed); flex: 1; }
+
+.eventMeta { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-4); }
+.eventMetaItem { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
+
+.eventStatus {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: 2px var(--space-3); border-radius: var(--radius-full);
+  font-size: var(--font-size-xsmall); font-weight: var(--font-weight-semibold);
+}
+.statusLive { background: #FEF2F2; color: #DC2626; }
+.statusUpcoming { background: #EEF2FF; color: #4F46E5; }
+.statusCompleted { background: #F3F4F6; color: #6B7280; }
+
+:global(.dark) .statusLive { background: rgba(239, 68, 68, 0.1); }
+:global(.dark) .statusUpcoming { background: rgba(79, 70, 229, 0.1); }
+
+.registerBtn {
+  width: 100%; padding: var(--space-3); background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: white; font-weight: var(--font-weight-semibold); font-size: var(--font-size-small);
+  border-radius: var(--radius-lg); text-align: center; text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+.registerBtn:hover { opacity: 0.9; }
+.registerBtnDisabled { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); cursor: not-allowed; }
