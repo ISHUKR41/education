@@ -1,16 +1,44 @@
 /*
  * FILE: Events.module.css
- * PURPOSE: Events page styles — event cards with date, status, and registration.
- * USED BY: src/app/events/page.tsx
+ * PURPOSE: Events page styles — hero media, backend registration feedback,
+ *          event cards, status chips, and responsive controls.
+ * USED BY: src/app/events/EventsClient.tsx and EventsLoadingSkeleton.tsx
+ * LAST UPDATED: 2026-05-12
  */
 
 .page { padding: var(--space-8) 0 var(--space-16); }
 .inner { max-width: var(--max-content-width); margin: 0 auto; padding: 0 var(--space-4); }
 @media (min-width: 768px) { .inner { padding: 0 var(--space-6); } }
 
-.header { margin-bottom: var(--space-8); }
-.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
-.subtitle { font-size: var(--font-size-body); color: var(--color-text-secondary); }
+.header {
+  position: relative;
+  min-height: 300px;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  background: #111827;
+}
+.headerMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center right;
+}
+.headerOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.78) 48%, rgba(15, 23, 42, 0.22) 100%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.6));
+}
+.headerContent { position: relative; z-index: 1; max-width: 620px; }
+.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); color: #ffffff; }
+.subtitle { font-size: var(--font-size-body); color: rgba(255, 255, 255, 0.84); max-width: 560px; }
 
 .eventGrid {
   display: grid; grid-template-columns: 1fr; gap: var(--space-6);
@@ -58,7 +86,142 @@
   width: 100%; padding: var(--space-3); background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: white; font-weight: var(--font-weight-semibold); font-size: var(--font-size-small);
   border-radius: var(--radius-lg); text-align: center; text-decoration: none;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
 }
-.registerBtn:hover { opacity: 0.9; }
+.registerBtn:hover { opacity: 0.9; transform: translateY(-1px); }
 .registerBtnDisabled { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); cursor: not-allowed; }
+.registerBtnSuccess { background: linear-gradient(135deg, var(--color-success), #14B8A6); }
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+}
+
+.notice a {
+  margin-left: auto;
+  font-weight: var(--font-weight-semibold);
+}
+
+.noticeSuccess {
+  color: #047857;
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+
+.noticeError {
+  color: #B91C1C;
+  background: #FEF2F2;
+  border-color: #FECACA;
+}
+
+.noticeInfo {
+  color: #1D4ED8;
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+}
+
+.loadingPanel {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+}
+
+.spinner {
+  animation: spin 0.9s linear infinite;
+}
+
+/* Dynamic route skeleton shown while the client-side Events bundle loads. */
+.loadingShell {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .loadingShell {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+}
+
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.loadingHero {
+  width: 100%;
+  min-height: 300px;
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-2xl);
+}
+
+.loadingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .loadingGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .loadingGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.loadingCard {
+  min-height: 360px;
+  border-radius: var(--radius-xl);
+}
+
+:global(.dark) .noticeSuccess {
+  color: #6EE7B7;
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+:global(.dark) .noticeError {
+  color: #FCA5A5;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+:global(.dark) .noticeInfo {
+  color: #BFDBFE;
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+@media (max-width: 767px) {
+  .header {
+    min-height: 340px;
+    padding: var(--space-6);
+  }
+
+  .headerMedia {
+    object-position: 60% center;
+  }
+}

@@ -9,20 +9,16 @@
  */
 
 import type { NextRequest } from "next/server";
-import { getSerializableEvents } from "@/lib/events/event-catalog";
 import { getAuthenticatedUser } from "@/lib/server/auth/current-user";
-import { listRegisteredEventIds } from "@/lib/server/data/platform-store";
-import { apiSuccess } from "@/lib/server/utils/api-response";
+import { buildEventCatalogSnapshot } from "@/lib/server/services/events-service";
+import { apiSuccess, NO_STORE_HEADERS } from "@/lib/server/utils/api-response";
 
 export const runtime = "nodejs";
 
 /** Returns events plus per-user registration state when available. */
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser(request);
-  const registeredEventIds = user ? await listRegisteredEventIds(user.id) : [];
+  const snapshot = await buildEventCatalogSnapshot(user?.id);
 
-  return apiSuccess({
-    events: getSerializableEvents(),
-    registeredEventIds,
-  });
+  return apiSuccess(snapshot, { headers: NO_STORE_HEADERS });
 }

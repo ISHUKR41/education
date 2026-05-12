@@ -1,0 +1,13 @@
+# Deployment payload rule:
+# Keep the live app lean. The large MCP planning documents remain in the repo
+# for development reference, but they are not runtime assets and must not be
+# uploaded with each Vercel deployment.
+EduBattle_Master_Plan.md
+Education_Platform_MCP.md
+MCP_EduPlatform.md
+Merged_Website_MCP_Final_Master_Plan.md
+Website_MCP_Master_Creation_Plan.md
+
+# Local-only working files that are not part of the hosted application.
+.data/
+txt.txt

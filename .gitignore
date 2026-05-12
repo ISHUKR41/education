@@ -29,6 +29,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+devserver.stdout.log
+devserver.stderr.log
 
 # local MVP data store
 /.data/

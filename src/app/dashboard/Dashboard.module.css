@@ -2,7 +2,8 @@
  * FILE: Dashboard.module.css
  * PURPOSE: Dashboard page styles — stats cards, streak widget, level progress,
  *          activity graph, and quick action cards.
- * USED BY: src/app/dashboard/page.tsx
+ * USED BY: src/app/dashboard/DashboardClient.tsx and DashboardLoadingSkeleton.tsx
+ * LAST UPDATED: 2026-05-12
  */
 
 .page {
@@ -358,6 +359,63 @@
 .skeletonBlock {
   min-height: 16rem;
   border-radius: var(--radius-lg);
+}
+
+/* Dynamic route skeleton shown while the client-side Dashboard bundle loads. */
+.loadingShell {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .loadingShell {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+}
+
+.loadingTitle {
+  width: min(26rem, 70%);
+  min-height: 2rem;
+  margin-bottom: var(--space-6);
+  border-radius: var(--radius-lg);
+}
+
+.loadingStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .loadingStatsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.loadingStat {
+  min-height: 7.5rem;
+  border-radius: var(--radius-xl);
+}
+
+.loadingMainGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .loadingMainGrid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.loadingPanel {
+  min-height: 20rem;
+  border-radius: var(--radius-xl);
 }
 
 @media (max-width: 640px) {

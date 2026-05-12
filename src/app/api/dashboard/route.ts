@@ -11,7 +11,7 @@
 import type { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/lib/server/auth/current-user";
 import { buildDashboardSnapshot } from "@/lib/server/data/dashboard";
-import { apiError, apiSuccess } from "@/lib/server/utils/api-response";
+import { apiError, apiSuccess, NO_STORE_HEADERS } from "@/lib/server/utils/api-response";
 
 export const runtime = "nodejs";
 
@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser(request);
 
   if (!user) {
-    return apiError("UNAUTHENTICATED", "Please sign in to view your dashboard.", 401);
+    return apiError("UNAUTHENTICATED", "Please sign in to view your dashboard.", 401, undefined, NO_STORE_HEADERS);
   }
 
-  return apiSuccess(buildDashboardSnapshot(user));
+  return apiSuccess(buildDashboardSnapshot(user), { headers: NO_STORE_HEADERS });
 }

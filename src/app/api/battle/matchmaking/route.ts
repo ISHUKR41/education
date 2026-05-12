@@ -11,9 +11,9 @@
 
 import type { NextRequest } from "next/server";
 import { getAuthenticatedUser } from "@/lib/server/auth/current-user";
-import { createMatchmakingTicket } from "@/lib/server/data/platform-store";
 import { checkRateLimit, getClientKey } from "@/lib/server/security/rate-limit";
-import { apiError, apiSuccess, readJsonBody } from "@/lib/server/utils/api-response";
+import { queueBattleMatch } from "@/lib/server/services/battle-service";
+import { apiError, apiSuccess, NO_STORE_HEADERS, readJsonBody } from "@/lib/server/utils/api-response";
 import { battleMatchmakingSchema } from "@/lib/validation/auth";
 
 export const runtime = "nodejs";
@@ -23,10 +23,10 @@ export async function POST(request: NextRequest) {
   const user = await getAuthenticatedUser(request);
 
   if (!user) {
-    return apiError("UNAUTHENTICATED", "Please sign in before starting a battle.", 401);
+    return apiError("UNAUTHENTICATED", "Please sign in before starting a battle.", 401, undefined, NO_STORE_HEADERS);
   }
 
-  const rateLimit = checkRateLimit({
+  const rateLimit = await checkRateLimit({
     key: getClientKey(request, `battle:${user.id}`),
     limit: 12,
     windowMs: 60 * 1000,
@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
       "RATE_LIMITED",
       `Too many matchmaking requests. Please try again in ${rateLimit.retryAfterSeconds} seconds.`,
       429,
+      undefined,
+      { ...NO_STORE_HEADERS, "Retry-After": rateLimit.retryAfterSeconds.toString() },
     );
   }
 
@@ -46,13 +48,7 @@ export async function POST(request: NextRequest) {
     return apiError("VALIDATION_ERROR", "Please select a valid battle category.", 422, parsed.error.flatten());
   }
 
-  const ticketId = await createMatchmakingTicket(user.id, parsed.data.category);
+  const queuedMatch = await queueBattleMatch(user.id, parsed.data);
 
-  return apiSuccess({
-    ticketId,
-    category: parsed.data.category,
-    status: "queued",
-    estimatedWaitSeconds: 18,
-    opponentPool: "same-track-similar-level",
-  });
+  return apiSuccess(queuedMatch, { headers: NO_STORE_HEADERS });
 }

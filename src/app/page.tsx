@@ -6,12 +6,13 @@
  *          statistics bar, and a call-to-action banner.
  * USED BY: Next.js App Router — renders at the "/" route
  * DEPENDENCIES: next/link, lucide-react, HomePage.module.css, constants.ts
- * LAST UPDATED: 2026-05-11
+ * LAST UPDATED: 2026-05-12
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import {
-  ArrowRight, Zap, BookOpen, GraduationCap, Code2,
+  ArrowRight, Zap, BookOpen, ClipboardCheck, GraduationCap, Code2,
   Flame, Swords, Trophy, Target, BarChart3,
   Shield, Sparkles
 } from "lucide-react";
@@ -30,19 +31,19 @@ export const metadata = {
 const CLASS_CARDS = [
   {
     id: "class-9", name: "Class 9", description: "Build a rock-solid foundation across all subjects",
-    subjectCount: 6, gradient: "linear-gradient(135deg, #3B82F6, #06B6D4)", href: "/class-9",
+    subjectCount: 6, gradient: "linear-gradient(135deg, #2563EB, #0EA5E9)", href: "/class-9",
   },
   {
     id: "class-10", name: "Class 10", description: "Board exam ready — structured revision & practice tests",
-    subjectCount: 6, gradient: "linear-gradient(135deg, #8B5CF6, #A855F7)", href: "/class-10",
+    subjectCount: 6, gradient: "linear-gradient(135deg, #0F766E, #14B8A6)", href: "/class-10",
   },
   {
     id: "class-11", name: "Class 11", description: "Stream-based deep learning — Science, Commerce, Arts",
-    subjectCount: 18, gradient: "linear-gradient(135deg, #10B981, #14B8A6)", href: "/class-11",
+    subjectCount: 18, gradient: "linear-gradient(135deg, #7C3AED, #2563EB)", href: "/class-11",
   },
   {
     id: "class-12", name: "Class 12", description: "Board + entrance exam mastery with mock tests",
-    subjectCount: 18, gradient: "linear-gradient(135deg, #F59E0B, #F97316)", href: "/class-12",
+    subjectCount: 18, gradient: "linear-gradient(135deg, #D97706, #EA580C)", href: "/class-12",
   },
 ];
 
@@ -88,6 +89,15 @@ export default function HomePage() {
     <>
       {/* ==================== HERO SECTION ==================== */}
       <section className={styles.hero}>
+        <Image
+          src="/images/eduquest-home-hero.png"
+          alt="Students learning and competing inside a modern digital education platform"
+          fill
+          priority
+          className={styles.heroMedia}
+          sizes="100vw"
+        />
+        <div className={styles.heroShade} aria-hidden="true" />
         <div className={styles.heroInner}>
           {/* Platform Badge */}
           <div className={styles.heroBadge}>
@@ -113,6 +123,10 @@ export default function HomePage() {
               <Zap size={18} />
               Start Learning Free
             </Link>
+            <Link href="/test" className={`${styles.heroBtn} ${styles.heroBtnSecondary}`}>
+              <ClipboardCheck size={18} />
+              Open Test Center
+            </Link>
             <Link href="/engineering" className={`${styles.heroBtn} ${styles.heroBtnSecondary}`}>
               <Code2 size={18} />
               Explore Engineering
@@ -122,20 +136,20 @@ export default function HomePage() {
           {/* Stats Bar */}
           <div className={styles.statsBar}>
             <div className={styles.statItem}>
-              <span className={styles.statNumber}>50K+</span>
-              <span className={styles.statLabel}>Students</span>
+              <span className={styles.statNumber}>4</span>
+              <span className={styles.statLabel}>School Tracks</span>
             </div>
             <div className={styles.statItem}>
-              <span className={styles.statNumber}>12+</span>
-              <span className={styles.statLabel}>Languages</span>
+              <span className={styles.statNumber}>12</span>
+              <span className={styles.statLabel}>Coding Tracks</span>
             </div>
             <div className={styles.statItem}>
-              <span className={styles.statNumber}>500+</span>
-              <span className={styles.statLabel}>Chapters</span>
+              <span className={styles.statNumber}>100+</span>
+              <span className={styles.statLabel}>Prebuilt Routes</span>
             </div>
             <div className={styles.statItem}>
-              <span className={styles.statNumber}>10K+</span>
-              <span className={styles.statLabel}>Questions</span>
+              <span className={styles.statNumber}>5</span>
+              <span className={styles.statLabel}>Live API Areas</span>
             </div>
           </div>
         </div>
@@ -214,7 +228,7 @@ export default function HomePage() {
           <div className={styles.ctaCard}>
             <h2 className={styles.ctaTitle}>Ready to Level Up?</h2>
             <p className={styles.ctaSubtitle}>
-              Join thousands of students mastering their subjects through gamified learning.
+              Start with the routes that already work today, then keep expanding into deeper practice and competition modules.
             </p>
             <Link href="/sign-up" className={styles.ctaBtn}>
               Get Started Free <ArrowRight size={16} />

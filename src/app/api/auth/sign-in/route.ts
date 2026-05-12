@@ -11,17 +11,16 @@
 
 import type { NextRequest } from "next/server";
 import { attachSessionCookie, createSessionToken } from "@/lib/server/auth/session";
-import { verifyPassword } from "@/lib/server/auth/password";
-import { findUserByEmail, toPublicUser } from "@/lib/server/data/platform-store";
+import { authenticateStudent } from "@/lib/server/services/auth-service";
 import { checkRateLimit, getClientKey } from "@/lib/server/security/rate-limit";
-import { apiError, apiSuccess, readJsonBody } from "@/lib/server/utils/api-response";
+import { apiError, apiSuccess, NO_STORE_HEADERS, readJsonBody } from "@/lib/server/utils/api-response";
 import { signInSchema } from "@/lib/validation/auth";
 
 export const runtime = "nodejs";
 
 /** Handles email/password sign-in and returns the authenticated public user. */
 export async function POST(request: NextRequest) {
-  const rateLimit = checkRateLimit({
+  const rateLimit = await checkRateLimit({
     key: getClientKey(request, "auth:sign-in"),
     limit: 10,
     windowMs: 60 * 1000,
@@ -32,6 +31,8 @@ export async function POST(request: NextRequest) {
       "RATE_LIMITED",
       `Too many sign-in attempts. Please try again in ${rateLimit.retryAfterSeconds} seconds.`,
       429,
+      undefined,
+      { ...NO_STORE_HEADERS, "Retry-After": rateLimit.retryAfterSeconds.toString() },
     );
   }
 
@@ -41,17 +42,13 @@ export async function POST(request: NextRequest) {
     return apiError("VALIDATION_ERROR", "Please enter a valid email and password.", 422, parsed.error.flatten());
   }
 
-  const storedUser = await findUserByEmail(parsed.data.email);
-  const isValidPassword = storedUser
-    ? await verifyPassword(parsed.data.password, storedUser.passwordHash)
-    : false;
+  const user = await authenticateStudent(parsed.data);
 
-  if (!storedUser || !isValidPassword) {
+  if (!user) {
     return apiError("INVALID_CREDENTIALS", "Email or password is incorrect.", 401);
   }
 
-  const user = toPublicUser(storedUser);
-  const response = apiSuccess({ user }, { message: "Signed in successfully." });
+  const response = apiSuccess({ user }, { message: "Signed in successfully.", headers: NO_STORE_HEADERS });
   attachSessionCookie(response, createSessionToken(user));
   return response;
 }

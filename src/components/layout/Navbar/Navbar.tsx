@@ -13,10 +13,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Menu, X, Sun, Moon, Home, BookOpen, GraduationCap,
-  Code2, Users, Trophy, Zap, Swords, BarChart3
+  ClipboardCheck, Code2, LayoutDashboard, LogOut, Users, Trophy, Zap, Swords, BarChart3
 } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import styles from "./Navbar.module.css";
@@ -26,7 +26,7 @@ import styles from "./Navbar.module.css";
  * This keeps the constants file free of React imports.
  */
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
-  Home, BookOpen, GraduationCap, Code2, Users, Trophy, Swords, BarChart3,
+  Home, BookOpen, GraduationCap, ClipboardCheck, Code2, Users, Trophy, Swords, BarChart3,
 };
 
 /**
@@ -44,19 +44,19 @@ export default function Navbar() {
   /* Track whether the mobile drawer menu is currently open */
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  /* Track the current theme (light or dark) */
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    const stored = localStorage.getItem("eduquest-theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    return stored === "dark" || (!stored && prefersDark);
-  });
+  /*
+   * Track the current theme (light or dark).
+   * The initial value stays server-safe so the first client render matches SSR.
+   * The real preference is loaded in an effect immediately after hydration.
+   */
+  const [isDark, setIsDark] = useState(false);
 
   /* Get the current URL path to highlight the active nav link */
   const pathname = usePathname();
+  const router = useRouter();
+
+  /** Session-aware top shell state hydrated from the existing auth endpoint. */
+  const [sessionState, setSessionState] = useState<"checking" | "guest" | "authenticated">("checking");
 
   /**
    * Keep the root class synchronized with the current theme state.
@@ -71,6 +71,49 @@ export default function Navbar() {
       document.documentElement.dataset.theme = "light";
     }
   }, [isDark]);
+
+  /**
+   * Hydrates the saved/system theme after the initial paint.
+   * This avoids server/client markup differences in the theme button icon.
+   */
+  useEffect(() => {
+    const stored = localStorage.getItem("eduquest-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const resolvedTheme = stored === "dark" || (!stored && prefersDark);
+    const timer = window.setTimeout(() => setIsDark(resolvedTheme), 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  /**
+   * Resolve whether the current visitor already has a valid cookie session.
+   * The navbar uses this lightweight API result to show connected account actions.
+   */
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSessionState() {
+      try {
+        const response = await fetch("/api/auth/me", { cache: "no-store" });
+
+        if (!isMounted) {
+          return;
+        }
+
+        setSessionState(response.ok ? "authenticated" : "guest");
+      } catch {
+        if (isMounted) {
+          setSessionState("guest");
+        }
+      }
+    }
+
+    loadSessionState();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   /**
    * Toggle between light and dark mode.
@@ -102,6 +145,15 @@ export default function Navbar() {
   const openMobileMenu = () => {
     setIsMobileMenuOpen(true);
     document.body.style.overflow = "hidden";
+  };
+
+  /** Clears the signed session cookie and returns the visitor to the public home page. */
+  const handleSignOut = async () => {
+    await fetch("/api/auth/sign-out", { method: "POST" });
+    setSessionState("guest");
+    closeMobileMenu();
+    router.push("/");
+    router.refresh();
   };
 
   /**
@@ -153,9 +205,24 @@ export default function Navbar() {
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          {/* Desktop Auth Buttons */}
-          <Link href="/sign-in" className={styles.signInBtn}>Sign In</Link>
-          <Link href="/sign-up" className={styles.signUpBtn}>Sign Up</Link>
+          {/* Desktop Account / Auth Buttons */}
+          {sessionState === "authenticated" ? (
+            <>
+              <Link href="/dashboard" className={styles.dashboardBtn}>
+                <LayoutDashboard size={16} />
+                Dashboard
+              </Link>
+              <button className={styles.signOutBtn} onClick={handleSignOut}>
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/sign-in" className={styles.signInBtn}>Sign In</Link>
+              <Link href="/sign-up" className={styles.signUpBtn}>Sign Up</Link>
+            </>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -214,12 +281,27 @@ export default function Navbar() {
             </ul>
 
             <div className={styles.mobileAuthButtons}>
-              <Link href="/sign-in" className={styles.mobileSignIn} onClick={closeMobileMenu}>
-                Sign In
-              </Link>
-              <Link href="/sign-up" className={styles.mobileSignUp} onClick={closeMobileMenu}>
-                Sign Up Free
-              </Link>
+              {sessionState === "authenticated" ? (
+                <>
+                  <Link href="/dashboard" className={styles.mobileDashboard} onClick={closeMobileMenu}>
+                    <LayoutDashboard size={18} />
+                    Dashboard
+                  </Link>
+                  <button className={styles.mobileSignOut} onClick={handleSignOut}>
+                    <LogOut size={18} />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/sign-in" className={styles.mobileSignIn} onClick={closeMobileMenu}>
+                    Sign In
+                  </Link>
+                  <Link href="/sign-up" className={styles.mobileSignUp} onClick={closeMobileMenu}>
+                    Sign Up Free
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </>

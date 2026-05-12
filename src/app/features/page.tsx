@@ -14,7 +14,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   BarChart3,
-  BookOpen,
   Brain,
   Calendar,
   Code2,
@@ -97,7 +96,7 @@ const FEATURES = [
     gradient: "linear-gradient(135deg, #6366F1, #8B5CF6)",
     title: "Engineering Code Tracks",
     description:
-      "Comprehensive programming courses covering C, C++, Java, Python, JavaScript, TypeScript, Go, Rust, and more. Each language includes syntax lessons, practice problems, and project-based learning.",
+      "Structured programming plans cover C, C++, Java, Python, JavaScript, TypeScript, Rust, Kotlin, Swift, SQL, Dart, and Ruby. The catalog is already route-connected and ready for deeper problem content.",
     tags: ["12+ Languages", "Practice Problems", "Projects"],
   },
   {
@@ -105,16 +104,16 @@ const FEATURES = [
     gradient: "linear-gradient(135deg, #64748B, #475569)",
     title: "Anti-Cheat Protection",
     description:
-      "Fair competitions with server-side answer validation, tab-switch detection, copy-paste blocking during battles, and rate limiting to prevent automated abuse. Competition integrity is non-negotiable.",
-    tags: ["Tab Detection", "Rate Limiting", "Server Validation"],
+      "The current foundation already includes server-side validation, signed sessions, protected API routes, and rate limiting. Higher-stakes browser controls belong to the next secure exam phase.",
+    tags: ["Protected Routes", "Rate Limiting", "Server Validation"],
   },
   {
     icon: Calendar,
     gradient: "linear-gradient(135deg, #EC4899, #F43F5E)",
     title: "Events & Competitions",
     description:
-      "Participate in weekly coding contests, monthly subject olympiads, and seasonal championship events. Events feature live leaderboards, prize pools, and certificates for top performers.",
-    tags: ["Weekly Contests", "Olympiads", "Certificates"],
+      "Explore backend-connected event registration today, with a clean service boundary ready for future certificates, organizer tooling, and richer competition workflows.",
+    tags: ["Live Catalog", "Registration API", "Organizer Ready"],
   },
 ];
 

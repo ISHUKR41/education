@@ -27,6 +27,11 @@ export interface ApiFailure {
   };
 }
 
+/** Prevents personalized or rapidly changing API payloads from being cached. */
+export const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store",
+} as const;
+
 /** Creates a consistent JSON success response. */
 export function apiSuccess<T>(
   data: T,
@@ -44,10 +49,11 @@ export function apiError(
   message: string,
   status = 400,
   details?: unknown,
+  headers?: HeadersInit,
 ): NextResponse<ApiFailure> {
   return NextResponse.json(
     { ok: false, error: { code, message, details } },
-    { status },
+    { status, headers },
   );
 }
 

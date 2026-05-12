@@ -5,10 +5,11 @@
  *          and technical skills available for engineering students.
  * USED BY: Next.js App Router — renders at "/engineering"
  * DEPENDENCIES: lucide-react, Engineering.module.css, constants.ts
- * LAST UPDATED: 2026-05-11
+ * LAST UPDATED: 2026-05-12
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   Code2, Database,
   GitBranch, Globe, HardDrive, Network,
@@ -36,6 +37,15 @@ export default function EngineeringPage() {
       <div className={styles.inner}>
         {/* Banner */}
         <div className={styles.banner}>
+          <Image
+            src="/images/engineering-hero.png"
+            alt="Engineering learner working through programming and systems concepts"
+            fill
+            priority
+            className={styles.bannerMedia}
+            sizes="(max-width: 1280px) 100vw, 1280px"
+          />
+          <div className={styles.bannerOverlay} aria-hidden="true" />
           <div className={styles.bannerContent}>
             <div className={styles.bannerLabel}><Code2 size={14} /> Engineering Track</div>
             <h1 className={styles.bannerTitle}>Code Your Future</h1>

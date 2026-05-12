@@ -131,7 +131,40 @@ function createDefaultStore(): PlatformStore {
   };
 }
 
-/** Reads and normalizes the store from disk, creating it when it does not exist. */
+/** Returns true only when Node reports that the data file does not exist yet. */
+function isMissingStoreFile(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && "code" in error && error.code === "ENOENT";
+}
+
+/**
+ * Normalizes parsed disk data into the shape expected by the MVP repository.
+ * Invalid container types are rejected so damaged files never become silent resets.
+ */
+function normalizeStore(rawStore: unknown): PlatformStore {
+  if (!rawStore || typeof rawStore !== "object") {
+    throw new Error("PLATFORM_STORE_INVALID");
+  }
+
+  const parsed = rawStore as Partial<PlatformStore>;
+
+  if (
+    (parsed.users && !Array.isArray(parsed.users))
+    || (parsed.matchmakingTickets && !Array.isArray(parsed.matchmakingTickets))
+    || (parsed.communityPosts && !Array.isArray(parsed.communityPosts))
+    || (parsed.eventRegistrations && !Array.isArray(parsed.eventRegistrations))
+  ) {
+    throw new Error("PLATFORM_STORE_INVALID");
+  }
+
+  return {
+    users: parsed.users ?? [],
+    matchmakingTickets: parsed.matchmakingTickets ?? [],
+    communityPosts: parsed.communityPosts ?? [],
+    eventRegistrations: parsed.eventRegistrations ?? [],
+  };
+}
+
+/** Reads and normalizes the store from disk, creating it only when it is absent. */
 async function loadStore(): Promise<PlatformStore> {
   const runtime = getRuntime();
 
@@ -143,14 +176,17 @@ async function loadStore(): Promise<PlatformStore> {
 
   try {
     const raw = await readFile(filePath, "utf8");
-    const parsed = JSON.parse(raw) as Partial<PlatformStore>;
-    runtime.cache = {
-      users: parsed.users ?? [],
-      matchmakingTickets: parsed.matchmakingTickets ?? [],
-      communityPosts: parsed.communityPosts ?? [],
-      eventRegistrations: parsed.eventRegistrations ?? [],
-    };
-  } catch {
+    runtime.cache = normalizeStore(JSON.parse(raw));
+  } catch (error) {
+    if (!isMissingStoreFile(error)) {
+      /*
+       * Important safety rule:
+       * Never overwrite an existing store just because it failed to parse or
+       * read. Keeping the failure visible is safer than destroying user data.
+       */
+      throw new Error("PLATFORM_STORE_UNAVAILABLE", { cause: error });
+    }
+
     runtime.cache = createDefaultStore();
     await persistStore(runtime.cache);
   }

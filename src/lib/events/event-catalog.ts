@@ -31,7 +31,7 @@ export const PLATFORM_EVENTS: PlatformEvent[] = [
     id: "science-olympiad-2026",
     title: "Science Olympiad 2026",
     desc: "Test your science knowledge across Physics, Chemistry, and Biology in this national-level competition.",
-    date: "Jan 25, 2026",
+    date: "May 24, 2026",
     location: "Online",
     participants: 1250,
     status: "upcoming",
@@ -42,7 +42,7 @@ export const PLATFORM_EVENTS: PlatformEvent[] = [
     id: "code-sprint-dsa",
     title: "Code Sprint — DSA Challenge",
     desc: "Solve 10 DSA problems in 2 hours. Top performers win premium subscriptions and certificates.",
-    date: "Live Now!",
+    date: "May 12, 2026",
     location: "Online",
     participants: 890,
     status: "live",
@@ -53,7 +53,7 @@ export const PLATFORM_EVENTS: PlatformEvent[] = [
     id: "math-battle-royale",
     title: "Math Battle Royale",
     desc: "50 players, 1 winner. Quick-fire math questions with elimination rounds.",
-    date: "Feb 2, 2026",
+    date: "Jun 2, 2026",
     location: "Online",
     participants: 650,
     status: "upcoming",
@@ -64,7 +64,7 @@ export const PLATFORM_EVENTS: PlatformEvent[] = [
     id: "inter-college-hackathon",
     title: "Inter-College Hackathon",
     desc: "Build a full-stack project in 24 hours. Teams of 3-4. Open to all engineering students.",
-    date: "Feb 15, 2026",
+    date: "Jun 20, 2026",
     location: "Delhi NCR",
     participants: 420,
     status: "upcoming",
@@ -75,7 +75,7 @@ export const PLATFORM_EVENTS: PlatformEvent[] = [
     id: "class-10-board-mock",
     title: "Board Exam Mock Test — Class 10",
     desc: "Full-length mock exam simulating actual CBSE board exam conditions with instant analysis.",
-    date: "Dec 18, 2025",
+    date: "Apr 28, 2026",
     location: "Online",
     participants: 2100,
     status: "completed",
@@ -86,7 +86,7 @@ export const PLATFORM_EVENTS: PlatformEvent[] = [
     id: "python-championship",
     title: "Python Championship",
     desc: "Competitive programming contest focused on Python. Beginner to advanced problems included.",
-    date: "Mar 1, 2026",
+    date: "Jul 5, 2026",
     location: "Online",
     participants: 780,
     status: "upcoming",
@@ -103,5 +103,9 @@ export function canRegisterForEvent(eventId: string): boolean {
 
 /** Returns the event object without React icon functions for API responses. */
 export function getSerializableEvents() {
-  return PLATFORM_EVENTS.map(({ icon: _icon, ...event }) => event);
+  return PLATFORM_EVENTS.map((event) => {
+    const { icon, ...serializableEvent } = event;
+    void icon;
+    return serializableEvent;
+  });
 }

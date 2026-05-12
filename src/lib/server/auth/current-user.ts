@@ -11,7 +11,7 @@
 
 import type { NextRequest } from "next/server";
 import { getSessionFromRequest } from "@/lib/server/auth/session";
-import { findUserById, toPublicUser } from "@/lib/server/data/platform-store";
+import { getPlatformRepository } from "@/lib/server/repositories/get-platform-repository";
 import type { PublicUser } from "@/types/auth";
 
 /** Returns the authenticated user or null when the session is missing/invalid. */
@@ -22,6 +22,7 @@ export async function getAuthenticatedUser(request: NextRequest): Promise<Public
     return null;
   }
 
-  const user = await findUserById(session.sub);
-  return user ? toPublicUser(user) : null;
+  const repository = getPlatformRepository();
+  const user = await repository.users.findById(session.sub);
+  return user ? repository.users.toPublic(user) : null;
 }

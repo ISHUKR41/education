@@ -15,18 +15,11 @@ import {
   BarChart3,
   BookOpen,
   Code2,
-  Flame,
-  GraduationCap,
-  Heart,
-  Layers,
   Shield,
-  ShieldCheck,
   Sparkles,
   Swords,
   Target,
   Trophy,
-  Users,
-  Zap,
 } from "lucide-react";
 import styles from "./About.module.css";
 

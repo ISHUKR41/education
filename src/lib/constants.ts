@@ -16,6 +16,7 @@ export const NAV_LINKS = [
   { label: "Class 11", href: "/class-11", icon: "GraduationCap" },
   { label: "Class 12", href: "/class-12", icon: "GraduationCap" },
   { label: "Engineering", href: "/engineering", icon: "Code2" },
+  { label: "Tests", href: "/test", icon: "ClipboardCheck" },
   { label: "Battle", href: "/battle", icon: "Swords" },
   { label: "Leaderboard", href: "/leaderboard", icon: "BarChart3" },
   { label: "Community", href: "/community", icon: "Users" },
@@ -134,6 +135,7 @@ export const FOOTER_LINKS = {
   ],
   community: [
     { label: "Forums", href: "/community" },
+    { label: "Tests", href: "/test" },
     { label: "Events", href: "/events" },
     { label: "Leaderboard", href: "/leaderboard" },
   ],

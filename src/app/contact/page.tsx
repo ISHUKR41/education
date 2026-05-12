@@ -12,7 +12,6 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  BookOpen,
   HelpCircle,
   Mail,
   MessageSquare,

@@ -3,12 +3,12 @@
  * LOCATION: src/app/class-10/page.tsx
  * PURPOSE: Class 10 landing page — board exam focused, all subjects with progress.
  * USED BY: Next.js App Router — renders at "/class-10"
- * LAST UPDATED: 2026-05-11
+ * LAST UPDATED: 2026-05-12
  */
 
 import Link from "next/link";
 import { BookOpen, Calculator, Atom, Globe, Languages, ArrowRight } from "lucide-react";
-import styles from "@/styles/ClassPage.module.css";
+import styles from "./Class10.module.css";
 
 export const metadata = {
   title: "Class 10 — Board Exam Preparation",

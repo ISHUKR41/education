@@ -11,17 +11,16 @@
 
 import type { NextRequest } from "next/server";
 import { attachSessionCookie, createSessionToken } from "@/lib/server/auth/session";
-import { hashPassword } from "@/lib/server/auth/password";
-import { createUser } from "@/lib/server/data/platform-store";
 import { checkRateLimit, getClientKey } from "@/lib/server/security/rate-limit";
-import { apiError, apiSuccess, readJsonBody } from "@/lib/server/utils/api-response";
+import { registerStudentAccount } from "@/lib/server/services/auth-service";
+import { apiError, apiSuccess, NO_STORE_HEADERS, readJsonBody } from "@/lib/server/utils/api-response";
 import { signUpSchema } from "@/lib/validation/auth";
 
 export const runtime = "nodejs";
 
 /** Handles secure email/password registration for the MVP credentials flow. */
 export async function POST(request: NextRequest) {
-  const rateLimit = checkRateLimit({
+  const rateLimit = await checkRateLimit({
     key: getClientKey(request, "auth:sign-up"),
     limit: 8,
     windowMs: 60 * 1000,
@@ -32,6 +31,8 @@ export async function POST(request: NextRequest) {
       "RATE_LIMITED",
       `Too many sign-up attempts. Please try again in ${rateLimit.retryAfterSeconds} seconds.`,
       429,
+      undefined,
+      { ...NO_STORE_HEADERS, "Retry-After": rateLimit.retryAfterSeconds.toString() },
     );
   }
 
@@ -41,18 +42,11 @@ export async function POST(request: NextRequest) {
     return apiError("VALIDATION_ERROR", "Please check the highlighted fields.", 422, parsed.error.flatten());
   }
 
-  const passwordHash = await hashPassword(parsed.data.password);
-
   try {
-    const user = await createUser({
-      name: parsed.data.name,
-      email: parsed.data.email,
-      passwordHash,
-      track: parsed.data.selectedClass,
-    });
+    const user = await registerStudentAccount(parsed.data);
     const response = apiSuccess(
       { user },
-      { status: 201, message: "Account created successfully." },
+      { status: 201, message: "Account created successfully.", headers: NO_STORE_HEADERS },
     );
 
     attachSessionCookie(response, createSessionToken(user));

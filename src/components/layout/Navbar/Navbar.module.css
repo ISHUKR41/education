@@ -5,7 +5,7 @@
  *          Includes desktop and mobile responsive layouts, sticky positioning,
  *          glass morphism effect, and mobile drawer animation.
  * USED BY: Navbar.tsx component only
- * LAST UPDATED: 2026-05-11
+ * LAST UPDATED: 2026-05-12
  */
 
 /* Main navbar wrapper — sticky, glass effect, full width */
@@ -69,7 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary), #818CF8);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   color: white;
   border-radius: var(--radius-lg);
   font-size: 0.875rem;
@@ -77,7 +77,7 @@
 }
 
 .logoText {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -164,7 +164,7 @@
   font-size: var(--font-size-small);
   font-weight: var(--font-weight-semibold);
   color: white;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   border-radius: var(--radius-lg);
   transition: opacity var(--transition-fast), transform var(--transition-fast);
   box-shadow: var(--shadow-sm);
@@ -176,9 +176,50 @@
   box-shadow: var(--shadow-md);
 }
 
+.dashboardBtn,
+.signOutBtn {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-lg);
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dashboardBtn {
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboardBtn:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.signOutBtn {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+}
+
+.signOutBtn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary-lighter);
+  background: var(--color-primary-lightest);
+}
+
 @media (min-width: 768px) {
-  .signUpBtn {
+  .signUpBtn,
+  .dashboardBtn,
+  .signOutBtn {
     display: block;
+  }
+
+  .dashboardBtn,
+  .signOutBtn {
+    display: inline-flex;
   }
 }
 
@@ -326,11 +367,33 @@
   padding: var(--space-3);
   font-weight: var(--font-weight-semibold);
   color: white;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   border-radius: var(--radius-lg);
   transition: opacity var(--transition-fast);
 }
 
 .mobileSignUp:hover {
   opacity: 0.9;
+}
+
+.mobileDashboard,
+.mobileSignOut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-lg);
+}
+
+.mobileDashboard {
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+.mobileSignOut {
+  color: var(--color-text-primary);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
 }

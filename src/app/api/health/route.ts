@@ -8,15 +8,19 @@
  * LAST UPDATED: 2026-05-11
  */
 
-import { apiSuccess } from "@/lib/server/utils/api-response";
+import { apiSuccess, NO_STORE_HEADERS } from "@/lib/server/utils/api-response";
+import { getRuntimeHealthSnapshot } from "@/lib/server/observability/runtime-health";
 
 export const runtime = "nodejs";
 
 /** Returns process health and timestamp without exposing sensitive details. */
 export async function GET() {
+  const backend = await getRuntimeHealthSnapshot();
+
   return apiSuccess({
-    status: "ok",
+    status: backend.readiness.status === "ready" ? "ok" : "degraded",
     service: "eduquest-web",
     checkedAt: new Date().toISOString(),
-  });
+    backend,
+  }, { headers: NO_STORE_HEADERS });
 }

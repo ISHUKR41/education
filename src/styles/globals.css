@@ -5,8 +5,10 @@
  *          (design tokens) for colors, typography, spacing, animations, and base styles.
  *          This file is the single source of truth for the entire visual identity.
  * USED BY: Imported in src/app/layout.tsx — applied to every page in the application.
- * DEPENDENCIES: Tailwind CSS v4, @fontsource/inter, @fontsource/jetbrains-mono
- * LAST UPDATED: 2026-05-11
+ * DEPENDENCIES: Tailwind CSS v4, @fontsource/inter,
+ *               @fontsource/sora, @fontsource/space-grotesk,
+ *               @fontsource/jetbrains-mono
+ * LAST UPDATED: 2026-05-12
  * AUTHOR NOTE: All color values follow the EduQuest brand palette. Do not add page-specific
  *              styles here. Each page has its own CSS module. Only global tokens and resets here.
  */
@@ -20,8 +22,9 @@
 /* ============================================================
  * SECTION 2: Self-Hosted Font Imports
  * These @fontsource files are bundled with the app, so production pages do not
- * depend on Google Fonts network requests. Inter handles UI text, Sora handles
- * confident headings, and JetBrains Mono handles metrics/code.
+ * depend on Google Fonts network requests. Inter handles UI text, Space Grotesk
+ * handles crisp product headings, Space Grotesk remains available for legacy
+ * routes, and JetBrains Mono handles metrics/code.
  * ============================================================ */
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
@@ -32,6 +35,9 @@
 @import "@fontsource/sora/600.css";
 @import "@fontsource/sora/700.css";
 @import "@fontsource/sora/800.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/600.css";
 
@@ -42,17 +48,23 @@
  * ============================================================ */
 :root {
   /* --- Color Palette: Light Mode --- */
-  /* Primary: Deep Indigo — conveys trust, education, and focus */
-  --color-primary: #4F46E5;
-  --color-primary-hover: #4338CA;
-  --color-primary-light: #818CF8;
-  --color-primary-lighter: #C7D2FE;
-  --color-primary-lightest: #EEF2FF;
+  /* Primary: Professional blue — clear, trustworthy, and familiar for education products */
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-light: #38BDF8;
+  --color-primary-lighter: #BAE6FD;
+  --color-primary-lightest: #EFF6FF;
+
+  /* Secondary: Deep teal — balances the blue and prevents a one-note palette */
+  --color-secondary: #0F766E;
+  --color-secondary-hover: #115E59;
+  --color-secondary-light: #5EEAD4;
+  --color-secondary-lightest: #F0FDFA;
 
   /* Accent: Vibrant Amber — for rewards, achievements, and warmth */
-  --color-accent: #F59E0B;
-  --color-accent-hover: #D97706;
-  --color-accent-light: #FCD34D;
+  --color-accent: #D97706;
+  --color-accent-hover: #B45309;
+  --color-accent-light: #FBBF24;
   --color-accent-lightest: #FFFBEB;
 
   /* Success: Emerald Green — correct answers, level-ups, positive states */
@@ -74,14 +86,14 @@
 
   /* Neutral Colors — for backgrounds, text, borders */
   --color-bg-primary: #FFFFFF;
-  --color-bg-secondary: #F9FAFB;
-  --color-bg-tertiary: #F3F4F6;
+  --color-bg-secondary: #F8FAFC;
+  --color-bg-tertiary: #F1F5F9;
   --color-bg-card: #FFFFFF;
   --color-bg-card-hover: #F9FAFB;
 
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-tertiary: #9CA3AF;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94A3B8;
   --color-text-inverse: #FFFFFF;
 
   --color-border: #E5E7EB;
@@ -180,9 +192,14 @@
 .dark {
   --color-primary: #818CF8;
   --color-primary-hover: #6366F1;
-  --color-primary-light: #A5B4FC;
-  --color-primary-lighter: #312E81;
-  --color-primary-lightest: #1E1B4B;
+  --color-primary-light: #38BDF8;
+  --color-primary-lighter: #1E3A8A;
+  --color-primary-lightest: #172554;
+
+  --color-secondary: #5EEAD4;
+  --color-secondary-hover: #2DD4BF;
+  --color-secondary-light: #99F6E4;
+  --color-secondary-lightest: #134E4A;
 
   --color-accent: #FBBF24;
   --color-accent-hover: #F59E0B;

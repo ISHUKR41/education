@@ -2,10 +2,11 @@
  * FILE: page.tsx
  * LOCATION: src/app/class-9/page.tsx
  * PURPOSE: Class 9 landing page — shows all subjects available for Class 9
- *          with progress tracking and chapter counts. Uses shared ClassPage styles.
+ *          with progress tracking and chapter counts. Uses route-local styles
+ *          so this page can evolve independently.
  * USED BY: Next.js App Router — renders at "/class-9"
- * DEPENDENCIES: lucide-react, ClassPage.module.css
- * LAST UPDATED: 2026-05-11
+ * DEPENDENCIES: lucide-react, Class9.module.css
+ * LAST UPDATED: 2026-05-12
  */
 
 import Link from "next/link";
@@ -13,7 +14,7 @@ import {
   BookOpen, Calculator, Atom, Globe, Languages, Monitor,
   ArrowRight
 } from "lucide-react";
-import styles from "@/styles/ClassPage.module.css";
+import styles from "./Class9.module.css";
 
 /** SEO metadata for Class 9 page */
 export const metadata = {
