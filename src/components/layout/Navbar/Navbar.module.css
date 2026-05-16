@@ -200,6 +200,135 @@
   background: var(--color-primary-lightest);
 }
 
+/* =====================================================================
+ * NAV GROUP DROPDOWN STYLES
+ * Desktop dropdown panels that appear when clicking grouped nav buttons.
+ * ===================================================================== */
+
+/* Wrapper li for each nav group (Learn, Practice, Community) */
+.navGroupItem {
+  position: relative;
+}
+
+/* Group toggle button — looks like a navLink but is a button */
+.navGroupButton {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Chevron rotates 180deg when the dropdown is open */
+.navChevronOpen {
+  transform: rotate(180deg);
+  transition: transform var(--transition-fast);
+}
+
+/* Dropdown panel that appears under the nav group button */
+.navDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-dropdown);
+  min-width: 240px;
+  padding: var(--space-2);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  animation: fadeInUp 0.16s ease-out;
+}
+
+:global(.dark) .navDropdown {
+  background: var(--color-bg-card);
+  border-color: var(--color-border);
+}
+
+/* Small header inside the dropdown with group name and description */
+.navDropdownHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.navDropdownHeader span {
+  font-size: var(--font-size-xsmall);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.navDropdownHeader small {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+/* Individual link row inside the dropdown */
+.navDropdownLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.navDropdownLink:hover,
+.navDropdownLinkActive {
+  background: var(--color-primary-lightest);
+}
+
+:global(.dark) .navDropdownLink:hover,
+:global(.dark) .navDropdownLinkActive {
+  background: rgba(129, 140, 248, 0.12);
+}
+
+/* Icon box inside the dropdown link */
+.navDropdownIcon {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.navDropdownLink:hover .navDropdownIcon,
+.navDropdownLinkActive .navDropdownIcon {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+}
+
+/* Text stack: label + description */
+.navDropdownText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.navDropdownLabel {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.navDropdownDesc {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
 /* Right side — auth buttons and actions */
 .navActions {
   display: flex;
