@@ -1,0 +1,181 @@
+/*
+ * FILE: Leaderboard.module.css
+ * PURPOSE: Leaderboard page styles — rankings table, top 3 podium, filter tabs,
+ *          loading/error empty states, and route-local dynamic loading skeletons.
+ * USED BY: src/app/leaderboard/page.tsx, LeaderboardClient.tsx, and LeaderboardLoadingSkeleton.tsx
+ */
+
+.page { padding: var(--space-8) 0 var(--space-16); }
+.inner { max-width: 900px; margin: 0 auto; padding: 0 var(--space-4); }
+
+.header { text-align: center; margin-bottom: var(--space-8); }
+.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
+.subtitle { color: var(--color-text-secondary); }
+
+/* Filter tabs */
+.filters { display: flex; justify-content: center; gap: var(--space-2); margin-bottom: var(--space-8); flex-wrap: wrap; }
+.filterBtn {
+  padding: var(--space-2) var(--space-4); font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium); border-radius: var(--radius-full);
+  background: var(--color-bg-card); border: 1px solid var(--color-border);
+  color: var(--color-text-secondary); transition: all var(--transition-fast); cursor: pointer;
+}
+.filterBtn:hover { border-color: var(--color-primary-lighter); color: var(--color-primary); }
+.filterBtnActive { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+/* Top 3 podium */
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: var(--space-4); margin-bottom: var(--space-8); }
+.podiumItem { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.podiumAvatar {
+  width: 4rem; height: 4rem; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: var(--font-weight-bold); font-size: 1.25rem;
+}
+.podiumFirst .podiumAvatar { width: 5rem; height: 5rem; font-size: 1.5rem; }
+.podiumRank {
+  font-family: var(--font-family-stats); font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+.podiumName { font-weight: var(--font-weight-medium); font-size: var(--font-size-small); }
+.podiumXP { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
+.podiumMedal { font-size: 1.5rem; }
+
+/* Rankings table */
+.table {
+  width: 100%; background: var(--color-bg-card); border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl); overflow: hidden;
+}
+
+.statePanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 10rem;
+  padding: var(--space-6);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  color: var(--color-text-secondary);
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+.tableRow {
+  display: flex; align-items: center; padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background var(--transition-fast);
+}
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background: var(--color-bg-card-hover); }
+.tableRowSelf { background: var(--color-primary-lightest); }
+:global(.dark) .tableRowSelf { background: rgba(129, 140, 248, 0.08); }
+
+.rank {
+  width: 3rem; font-family: var(--font-family-stats);
+  font-weight: var(--font-weight-bold); font-size: var(--font-size-small);
+  color: var(--color-text-tertiary); text-align: center; flex-shrink: 0;
+}
+.rankTop { color: var(--color-accent); }
+
+.userAvatar {
+  width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: var(--font-size-xsmall); font-weight: var(--font-weight-bold);
+  flex-shrink: 0; margin-right: var(--space-3);
+}
+.userName { font-weight: var(--font-weight-medium); font-size: var(--font-size-small); flex: 1; }
+.userLevel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); width: 4rem; text-align: center; }
+.userXP {
+  font-family: var(--font-family-stats); font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold); color: var(--color-primary); width: 5rem; text-align: right;
+}
+
+/* Dynamic route skeleton shown while the client-side Leaderboard bundle loads. */
+.loadingShell {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-lg);
+}
+
+.loadingTitle {
+  width: min(15rem, 60%);
+  height: 2rem;
+  margin-bottom: var(--space-2);
+}
+
+.loadingSubtitle {
+  width: min(25rem, 75%);
+  height: 1rem;
+  margin-bottom: var(--space-8);
+}
+
+.loadingFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.loadingFilter {
+  width: 5rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+}
+
+.loadingPodium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.loadingPodiumSide {
+  width: min(10rem, 28vw);
+  height: 11.25rem;
+}
+
+.loadingPodiumCenter {
+  width: min(11.25rem, 30vw);
+  height: 13.75rem;
+}
+
+.loadingRows {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.loadingRow {
+  height: 3.5rem;
+}
+
+@media (max-width: 520px) {
+  .podium,
+  .loadingPodium {
+    gap: var(--space-2);
+  }
+
+  .podiumName,
+  .podiumXP {
+    max-width: 5.75rem;
+    text-align: center;
+  }
+
+  .tableRow {
+    padding-inline: var(--space-3);
+  }
+
+  .userLevel {
+    display: none;
+  }
+}

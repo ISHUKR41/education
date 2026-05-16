@@ -1,0 +1,32 @@
+/*
+ * FILE: LearningPlanPage.module.css
+ * LOCATION: src/components/learning/LearningPlanPage.module.css
+ * PURPOSE: Styles for dynamic learning plan detail pages.
+ * USED BY: LearningPlanPage.tsx
+ * LAST UPDATED: 2026-05-11
+ */
+
+.page { max-width: var(--max-content-width); margin: 0 auto; padding: var(--space-8) var(--space-4) var(--space-16); }
+@media (min-width: 768px) { .page { padding-left: var(--space-6); padding-right: var(--space-6); } }
+.backLink { display: inline-flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-5); color: var(--color-text-secondary); font-size: var(--font-size-small); }
+.hero { padding: var(--space-8); margin-bottom: var(--space-6); background: var(--color-bg-card); border: 1px solid var(--color-border); border-top: 5px solid var(--color-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+.eyebrow { display: inline-block; margin-bottom: var(--space-3); color: var(--color-primary); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); text-transform: uppercase; }
+.hero h1 { margin-bottom: var(--space-3); font-size: var(--font-size-h1); }
+.hero p { max-width: 760px; color: var(--color-text-secondary); line-height: var(--line-height-relaxed); }
+.metrics { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.metrics span { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-small); color: var(--color-text-secondary); }
+.grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
+@media (min-width: 980px) { .grid { grid-template-columns: 2fr 1fr; align-items: start; } }
+.card, .sideCard { padding: var(--space-6); background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+.card h2, .sideCard h2 { margin-bottom: var(--space-4); font-size: var(--font-size-h4); }
+.moduleList { display: grid; gap: var(--space-3); padding: 0; margin: 0; list-style: none; }
+.moduleList li { display: flex; gap: var(--space-3); padding: var(--space-4); background: var(--color-bg-secondary); border: 1px solid var(--color-border-light); border-radius: var(--radius-lg); }
+.moduleList li > span { width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center; color: white; background: var(--color-primary); border-radius: var(--radius-md); font-family: var(--font-family-stats); font-size: var(--font-size-xsmall); font-weight: var(--font-weight-bold); flex-shrink: 0; }
+.moduleList strong { display: block; margin-bottom: 2px; color: var(--color-text-primary); }
+.moduleList small { color: var(--color-text-tertiary); line-height: var(--line-height-normal); }
+.sideCard { position: sticky; top: calc(var(--navbar-height) + var(--space-4)); }
+.sideCard p { color: var(--color-text-secondary); line-height: var(--line-height-relaxed); font-size: var(--font-size-small); }
+.sideCard ul { display: grid; gap: var(--space-2); padding: 0; margin: var(--space-5) 0; list-style: none; }
+.sideCard li { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-secondary); font-size: var(--font-size-small); }
+.sideCard li svg { color: var(--color-success); }
+.primaryAction { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); width: 100%; padding: var(--space-3); color: white; background: var(--color-primary); border-radius: var(--radius-lg); font-weight: var(--font-weight-semibold); }
