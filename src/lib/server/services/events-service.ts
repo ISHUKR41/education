@@ -8,12 +8,12 @@
  * LAST UPDATED: 2026-05-12
  */
 
-import { canRegisterForEvent, getSerializableEvents } from "@/lib/events/event-catalog";
 import { getPlatformRepository } from "@/lib/server/repositories/get-platform-repository";
+import type { PlatformEventRecord } from "@/lib/server/repositories/platform-repository";
 import type { EventRegistrationInput } from "@/lib/validation/auth";
 
 export interface EventCatalogSnapshot {
-  events: ReturnType<typeof getSerializableEvents>;
+  events: PlatformEventRecord[];
   registeredEventIds: string[];
 }
 
@@ -22,7 +22,7 @@ export async function buildEventCatalogSnapshot(userId?: string): Promise<EventC
   const repository = getPlatformRepository();
 
   return {
-    events: getSerializableEvents(),
+    events: await repository.events.listCatalog(),
     registeredEventIds: userId ? await repository.events.listRegisteredEventIds(userId) : [],
   };
 }
@@ -32,7 +32,9 @@ export async function registerStudentForEvent(
   userId: string,
   input: EventRegistrationInput,
 ) {
-  if (!canRegisterForEvent(input.eventId)) {
+  const event = await getPlatformRepository().events.findCatalogEventById(input.eventId);
+
+  if (!event || event.status === "completed") {
     throw new Error("EVENT_NOT_AVAILABLE");
   }
 

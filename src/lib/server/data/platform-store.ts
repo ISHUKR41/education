@@ -19,6 +19,8 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { AuditLogEntry, CreateAuditLogInput } from "@/lib/server/audit/audit-log";
+import type { BackgroundJobIntent, CreateBackgroundJobInput } from "@/lib/server/jobs/job-intents";
 import type { LearningTrack, PublicUser, StoredUser } from "@/types/auth";
 
 interface CreateUserInput {
@@ -61,6 +63,8 @@ interface PlatformStore {
   matchmakingTickets: MatchmakingTicket[];
   communityPosts: CommunityPost[];
   eventRegistrations: EventRegistration[];
+  auditLogs: AuditLogEntry[];
+  backgroundJobs: BackgroundJobIntent[];
 }
 
 interface StoreRuntime {
@@ -102,6 +106,8 @@ function createDefaultStore(): PlatformStore {
     users: [],
     matchmakingTickets: [],
     eventRegistrations: [],
+    auditLogs: [],
+    backgroundJobs: [],
     communityPosts: [
       {
         id: "seed-quadratic-equations",
@@ -152,6 +158,8 @@ function normalizeStore(rawStore: unknown): PlatformStore {
     || (parsed.matchmakingTickets && !Array.isArray(parsed.matchmakingTickets))
     || (parsed.communityPosts && !Array.isArray(parsed.communityPosts))
     || (parsed.eventRegistrations && !Array.isArray(parsed.eventRegistrations))
+    || (parsed.auditLogs && !Array.isArray(parsed.auditLogs))
+    || (parsed.backgroundJobs && !Array.isArray(parsed.backgroundJobs))
   ) {
     throw new Error("PLATFORM_STORE_INVALID");
   }
@@ -161,6 +169,8 @@ function normalizeStore(rawStore: unknown): PlatformStore {
     matchmakingTickets: parsed.matchmakingTickets ?? [],
     communityPosts: parsed.communityPosts ?? [],
     eventRegistrations: parsed.eventRegistrations ?? [],
+    auditLogs: parsed.auditLogs ?? [],
+    backgroundJobs: parsed.backgroundJobs ?? [],
   };
 }
 
@@ -303,6 +313,15 @@ export async function createMatchmakingTicket(userId: string, category: string):
   }, { persist: true });
 }
 
+/** Lists one user's matchmaking tickets newest-first for real battle statistics. */
+export async function listMatchmakingTicketsForUser(userId: string): Promise<MatchmakingTicket[]> {
+  return withStore((store) =>
+    store.matchmakingTickets
+      .filter((ticket) => ticket.userId === userId)
+      .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt)),
+  );
+}
+
 /** Returns newest community posts first. */
 export async function listCommunityPosts(): Promise<CommunityPost[]> {
   return withStore((store) =>
@@ -366,4 +385,74 @@ export async function listRegisteredEventIds(userId: string): Promise<string[]> 
       .filter((registration) => registration.userId === userId)
       .map((registration) => registration.eventId),
   );
+}
+
+/** Returns public ranking candidates sorted by XP and level for leaderboard APIs. */
+export async function listPublicUsersByRank(): Promise<PublicUser[]> {
+  return withStore((store) =>
+    store.users
+      .map(toPublicUser)
+      .sort((left, right) => {
+        if (right.xp !== left.xp) {
+          return right.xp - left.xp;
+        }
+
+        if (right.level !== left.level) {
+          return right.level - left.level;
+        }
+
+        return Date.parse(left.createdAt) - Date.parse(right.createdAt);
+      }),
+  );
+}
+
+/** Stores one safe audit record for security, moderation, and production review. */
+export async function createAuditLog(input: CreateAuditLogInput): Promise<AuditLogEntry> {
+  return withStore((store) => {
+    const entry: AuditLogEntry = {
+      ...input,
+      id: randomUUID(),
+      metadata: input.metadata ?? {},
+      createdAt: new Date().toISOString(),
+    };
+
+    store.auditLogs.push(entry);
+
+    /*
+     * Keep the local JSON store bounded. PostgreSQL keeps the full audit
+     * history, while local development only needs recent records for debugging.
+     */
+    if (store.auditLogs.length > 500) {
+      store.auditLogs.splice(0, store.auditLogs.length - 500);
+    }
+
+    return entry;
+  }, { persist: true });
+}
+
+/** Creates a durable background job intent for future worker processing. */
+export async function createBackgroundJob(input: CreateBackgroundJobInput): Promise<BackgroundJobIntent> {
+  return withStore((store) => {
+    const job: BackgroundJobIntent = {
+      ...input,
+      id: randomUUID(),
+      status: "pending",
+      payload: input.payload ?? {},
+      attempts: 0,
+      createdAt: new Date().toISOString(),
+      runAfter: input.runAfter ?? new Date().toISOString(),
+    };
+
+    store.backgroundJobs.push(job);
+
+    /*
+     * The MVP JSON adapter is only a local fallback, so it keeps a bounded queue.
+     * Production uses PostgreSQL where workers can process and retain jobs safely.
+     */
+    if (store.backgroundJobs.length > 500) {
+      store.backgroundJobs.splice(0, store.backgroundJobs.length - 500);
+    }
+
+    return job;
+  }, { persist: true });
 }

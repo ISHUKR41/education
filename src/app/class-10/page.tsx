@@ -1,7 +1,7 @@
 /**
  * FILE: page.tsx
  * LOCATION: src/app/class-10/page.tsx
- * PURPOSE: Class 10 landing page — board exam focused, all subjects with progress.
+ * PURPOSE: Class 10 landing page — board exam focused, all subjects with catalog readiness.
  * USED BY: Next.js App Router — renders at "/class-10"
  * LAST UPDATED: 2026-05-12
  */
@@ -16,12 +16,12 @@ export const metadata = {
 };
 
 const SUBJECTS = [
-  { id: "mathematics-standard", name: "Maths (Standard)", icon: Calculator, chapters: 15, progress: 35, color: "#3B82F6", bg: "#EFF6FF" },
-  { id: "mathematics-basic", name: "Maths (Basic)", icon: Calculator, chapters: 15, progress: 25, color: "#6366F1", bg: "#EEF2FF" },
-  { id: "science", name: "Science", icon: Atom, chapters: 16, progress: 40, color: "#10B981", bg: "#ECFDF5" },
-  { id: "social-science", name: "Social Science", icon: Globe, chapters: 20, progress: 15, color: "#8B5CF6", bg: "#F5F3FF" },
-  { id: "english", name: "English", icon: Languages, chapters: 12, progress: 50, color: "#F59E0B", bg: "#FFFBEB" },
-  { id: "hindi", name: "Hindi", icon: Languages, chapters: 12, progress: 35, color: "#EF4444", bg: "#FEF2F2" },
+  { id: "mathematics-standard", name: "Maths (Standard)", icon: Calculator, chapters: 15, coverage: 100, color: "#3B82F6", bg: "#EFF6FF" },
+  { id: "mathematics-basic", name: "Maths (Basic)", icon: Calculator, chapters: 15, coverage: 100, color: "#6366F1", bg: "#EEF2FF" },
+  { id: "science", name: "Science", icon: Atom, chapters: 16, coverage: 100, color: "#10B981", bg: "#ECFDF5" },
+  { id: "social-science", name: "Social Science", icon: Globe, chapters: 20, coverage: 100, color: "#8B5CF6", bg: "#F5F3FF" },
+  { id: "english", name: "English", icon: Languages, chapters: 12, coverage: 100, color: "#F59E0B", bg: "#FFFBEB" },
+  { id: "hindi", name: "Hindi", icon: Languages, chapters: 12, coverage: 100, color: "#EF4444", bg: "#FEF2F2" },
 ];
 
 export default function Class10Page() {
@@ -60,14 +60,14 @@ export default function Class10Page() {
               </div>
               <div className={styles.subjectProgress}>
                 <div className={styles.progressBar}>
-                  <div className={styles.progressFill} style={{ width: `${s.progress}%`, background: s.color }} />
+                  <div className={styles.progressFill} style={{ width: `${s.coverage}%`, background: s.color }} />
                 </div>
                 <div className={styles.progressText}>
-                  <span>{s.progress}% Complete</span>
-                  <span>{Math.round(s.chapters * s.progress / 100)}/{s.chapters}</span>
+                  <span>Catalog Ready</span>
+                  <span>{s.chapters} chapters</span>
                 </div>
               </div>
-              <div className={styles.subjectFooter}>Continue <ArrowRight size={14} /></div>
+              <div className={styles.subjectFooter}>Open Plan <ArrowRight size={14} /></div>
             </Link>
           ))}
         </div>

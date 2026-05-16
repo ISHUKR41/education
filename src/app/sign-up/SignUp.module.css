@@ -181,14 +181,8 @@
 
 .trackGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-2);
-}
-
-@media (min-width: 640px) {
-  .trackGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .trackOption {

@@ -97,22 +97,8 @@
 /* Feature cards grid — responsive bento layout. */
 .featuresGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-4);
-}
-
-/* Tablet: 2 columns */
-@media (min-width: 640px) {
-  .featuresGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Desktop: 3 columns */
-@media (min-width: 960px) {
-  .featuresGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 /* Individual feature card — glass-morphism style with colored accent. */
@@ -253,14 +239,8 @@
 /* Comparison grid — 2-column layout. */
 .comparisonGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .comparisonGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 /* Comparison card — each shows what EduQuest offers vs alternatives. */

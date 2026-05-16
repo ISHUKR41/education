@@ -103,7 +103,7 @@
    Uses a bordered card style with flexbox for equal spacing. */
 .statsBar {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-4);
   max-width: 760px;
   margin: var(--space-10) auto 0;
@@ -112,13 +112,6 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
-}
-
-/* Desktop: show all 4 stats in a single row */
-@media (min-width: 640px) {
-  .statsBar {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 /* Individual stat item — centered text with a large number and small label. */
@@ -293,20 +286,8 @@
 /* Pillar cards grid — responsive 3-column layout. */
 .pillarsGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-5);
-}
-
-@media (min-width: 640px) {
-  .pillarsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 960px) {
-  .pillarsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 /* Individual pillar card — white card with colored top accent bar. */

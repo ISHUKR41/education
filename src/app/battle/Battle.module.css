@@ -1,7 +1,8 @@
 /*
  * FILE: Battle.module.css
- * PURPOSE: Battle Arena page styles — matchmaking UI, battle stats, opponent display.
- * USED BY: src/app/battle/page.tsx
+ * PURPOSE: Battle Arena page styles — matchmaking UI, battle stats, opponent
+ *          display, and route-local dynamic loading skeletons.
+ * USED BY: src/app/battle/page.tsx, BattleClient.tsx, and BattleLoadingSkeleton.tsx
  */
 
 .page { padding: var(--space-8) 0 var(--space-16); }
@@ -78,9 +79,8 @@
 
 /* Stats cards */
 .battleStats {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-4);
 }
-@media (min-width: 640px) { .battleStats { grid-template-columns: repeat(4, 1fr); } }
 
 .battleStatCard {
   padding: var(--space-4); background: var(--color-bg-card);
@@ -96,3 +96,47 @@
   font-weight: var(--font-weight-bold); color: var(--color-text-primary);
 }
 .battleStatLabel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); text-transform: uppercase; }
+
+/* Dynamic route skeleton shown while the client-side Battle bundle loads. */
+.loadingShell {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-lg);
+}
+
+.loadingTitle {
+  width: min(18rem, 70%);
+  height: 2rem;
+  margin: 0 auto var(--space-2);
+}
+
+.loadingSubtitle {
+  width: min(26rem, 80%);
+  height: 1rem;
+  margin: 0 auto var(--space-8);
+}
+
+.loadingMatchCard {
+  width: 100%;
+  min-height: 17.5rem;
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-2xl);
+}
+
+.loadingStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-4);
+}
+
+.loadingStat {
+  min-height: 6.25rem;
+}

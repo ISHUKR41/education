@@ -81,7 +81,9 @@ export function authorize(...roles: string[]) {
       return next(new AppError("Authentication required.", 401, "UNAUTHORIZED"));
     }
 
-    if (!roles.includes(req.user.role)) {
+    // Role values may come from legacy lowercase tokens or newer uppercase records.
+    const allowedRoles = roles.map((role) => role.toUpperCase());
+    if (!allowedRoles.includes(req.user.role.toUpperCase())) {
       return next(
         new AppError(
           "You do not have permission to perform this action.",

@@ -90,20 +90,8 @@
 
 .subjectGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .subjectGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .subjectGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .subjectCard {
@@ -190,4 +178,29 @@
   color: var(--color-primary);
   font-size: var(--font-size-small);
   font-weight: var(--font-weight-medium);
+}
+
+/* =========================================
+   Mobile Responsiveness for small screens 
+   ========================================= */
+@media (max-width: 480px) {
+  .classBanner {
+    padding: var(--space-6) var(--space-4);
+  }
+  
+  .bannerStats {
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-4);
+  }
+  
+  .subjectGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 350px) {
+  .bannerStats {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
 }

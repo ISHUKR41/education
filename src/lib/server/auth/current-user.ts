@@ -10,7 +10,7 @@
  */
 
 import type { NextRequest } from "next/server";
-import { getSessionFromRequest } from "@/lib/server/auth/session";
+import { getSessionFromRequest, verifySessionToken } from "@/lib/server/auth/session";
 import { getPlatformRepository } from "@/lib/server/repositories/get-platform-repository";
 import type { PublicUser } from "@/types/auth";
 
@@ -18,6 +18,18 @@ import type { PublicUser } from "@/types/auth";
 export async function getAuthenticatedUser(request: NextRequest): Promise<PublicUser | null> {
   const session = getSessionFromRequest(request);
 
+  return getAuthenticatedUserFromPayload(session);
+}
+
+/** Resolves a raw session token into a public user for server-rendered route guards. */
+export async function getAuthenticatedUserFromToken(token: string | undefined): Promise<PublicUser | null> {
+  return getAuthenticatedUserFromPayload(verifySessionToken(token));
+}
+
+/** Shared lookup path used by both API requests and server page guards. */
+async function getAuthenticatedUserFromPayload(
+  session: ReturnType<typeof verifySessionToken>,
+): Promise<PublicUser | null> {
   if (!session) {
     return null;
   }

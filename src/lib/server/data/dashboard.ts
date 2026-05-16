@@ -1,15 +1,16 @@
 /**
  * FILE: dashboard.ts
  * LOCATION: src/lib/server/data/dashboard.ts
- * PURPOSE: Builds the dashboard API response from user profile data. Today this
- *          is deterministic MVP data; later these fields should come from
- *          Postgres progress tables and Redis leaderboard counters.
+ * PURPOSE: Builds the dashboard API response from the authenticated user plus
+ *          repository-backed metrics. It keeps UI formatting in one backend
+ *          place while using real persisted counts and rankings where available.
  * USED BY: /api/dashboard route handler
  * DEPENDENCIES: shared auth types
  * LAST UPDATED: 2026-05-11
  */
 
 import type { PublicUser } from "@/types/auth";
+import type { DashboardMetrics } from "@/lib/server/repositories/platform-repository";
 
 export interface DashboardSnapshot {
   user: PublicUser;
@@ -18,6 +19,7 @@ export interface DashboardSnapshot {
     value: string;
     tone: "streak" | "xp" | "battle" | "rank";
   }>;
+  metrics: DashboardMetrics;
   xpToNextLevel: number;
   streakDays: Array<{
     isoDate: string;
@@ -56,21 +58,57 @@ function buildStreakDays(streak: number): DashboardSnapshot["streakDays"] {
   });
 }
 
+/** Builds a short activity list from real user-owned backend events. */
+function buildRecentActivity(metrics: DashboardMetrics): DashboardSnapshot["recentActivity"] {
+  const activity: DashboardSnapshot["recentActivity"] = [
+    { text: "Account profile is connected to the backend", time: "Today", tone: "success" },
+  ];
+
+  if (metrics.queuedBattleTickets > 0) {
+    activity.push({
+      text: `${metrics.queuedBattleTickets} battle queue ticket${metrics.queuedBattleTickets === 1 ? "" : "s"} waiting`,
+      time: "Live",
+      tone: "battle",
+    });
+  }
+
+  if (metrics.communityPosts > 0) {
+    activity.push({
+      text: `${metrics.communityPosts} community post${metrics.communityPosts === 1 ? "" : "s"} created`,
+      time: "Saved",
+      tone: "learn",
+    });
+  }
+
+  if (metrics.eventRegistrations > 0) {
+    activity.push({
+      text: `${metrics.eventRegistrations} event registration${metrics.eventRegistrations === 1 ? "" : "s"} saved`,
+      time: "Saved",
+      tone: "success",
+    });
+  }
+
+  activity.push({ text: "Daily streak tracker is ready", time: "Today", tone: "streak" });
+  return activity.slice(0, 4);
+}
+
 /** Builds the student dashboard payload used by the frontend client. */
-export function buildDashboardSnapshot(user: PublicUser): DashboardSnapshot {
+export function buildDashboardSnapshot(
+  user: PublicUser,
+  metrics: DashboardMetrics,
+): DashboardSnapshot {
   const xpToNextLevel = Math.max(1200, (user.level + 1) * 300);
-  const battleWins = Math.max(0, Math.floor(user.xp / 180));
-  const globalRank = Math.max(1, 500 - user.level * 17);
 
   return {
     user,
+    metrics,
     xpToNextLevel,
     streakDays: buildStreakDays(user.streak),
     stats: [
       { label: "Current Streak", value: `${user.streak}d`, tone: "streak" },
       { label: "Total XP", value: user.xp.toLocaleString(), tone: "xp" },
-      { label: "Battles Won", value: battleWins.toString(), tone: "battle" },
-      { label: "Global Rank", value: `#${globalRank}`, tone: "rank" },
+      { label: "Battle Tickets", value: metrics.battleTickets.toString(), tone: "battle" },
+      { label: "Global Rank", value: metrics.globalRank ? `#${metrics.globalRank}` : "Unranked", tone: "rank" },
     ],
     quickActions: [
       { title: "Continue Learning", description: "Resume your selected track", href: `/${user.track}`, tone: "learn" },
@@ -78,11 +116,6 @@ export function buildDashboardSnapshot(user: PublicUser): DashboardSnapshot {
       { title: "Practice Coding", description: "Engineering plans and DSA", href: "/engineering", tone: "code" },
       { title: "Community", description: "Ask and answer doubts", href: "/community", tone: "community" },
     ],
-    recentActivity: [
-      { text: "Account created and learning track selected", time: "Today", tone: "success" },
-      { text: "Dashboard profile initialized", time: "Today", tone: "learn" },
-      { text: "Battle readiness score prepared", time: "Today", tone: "battle" },
-      { text: "Daily streak tracker is ready", time: "Today", tone: "streak" },
-    ],
+    recentActivity: buildRecentActivity(metrics),
   };
 }

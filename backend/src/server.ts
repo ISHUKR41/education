@@ -43,9 +43,6 @@ import battleRoutes from "./routes/battle.routes";
 import healthRoutes from "./routes/health.routes";
 
 // Import database initializer
-import { initializeDatabase } from "./database/initialize";
-
-// Import global error handler
 import { globalErrorHandler, notFoundHandler } from "./middleware/error.middleware";
 
 // ============================================================
@@ -160,9 +157,7 @@ app.use(globalErrorHandler);
  */
 async function startServer(): Promise<void> {
   try {
-    // Initialize database tables and seed data
-    await initializeDatabase();
-    console.log("✅ Database initialized successfully");
+    console.log("✅ Prisma Client connected successfully");
 
     // Start listening for HTTP requests
     app.listen(PORT, () => {

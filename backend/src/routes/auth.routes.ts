@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { dbHelper } from "../database/initialize";
+import prisma from "../database/prisma";
 import { validate } from "../middleware/validate.middleware";
 import { authenticate } from "../middleware/auth.middleware";
 import { AppError } from "../middleware/error.middleware";
@@ -27,6 +27,29 @@ const signinSchema = z.object({
   password: z.string().min(1, "Required"),
 });
 
+const roleBySignupInput = {
+  student: "STUDENT",
+  parent: "PARENT",
+  teacher: "TEACHER",
+  organizer: "ORGANIZER",
+} as const;
+
+function toApiUser(user: {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string;
+  studentProfile?: unknown;
+}) {
+  return {
+    id: user.id,
+    email: user.email,
+    displayName: user.name,
+    role: user.role,
+    studentProfile: user.studentProfile,
+  };
+}
+
 function generateTokens(userId: string, email: string, role: string) {
   const accessToken = jwt.sign({ userId, email, role }, process.env.JWT_SECRET!, { expiresIn: "15m" });
   const refreshToken = jwt.sign({ userId, email, role }, process.env.JWT_REFRESH_SECRET!, { expiresIn: "7d" });
@@ -41,41 +64,66 @@ function setAuthCookies(res: Response, at: string, rt: string) {
 router.post("/signup", validate(signupSchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, displayName, role } = req.body;
-    const existing = dbHelper.get("SELECT id FROM users WHERE email = ?", email);
-    if (existing) throw new AppError("Email already registered.", 409, "EMAIL_EXISTS");
+    const normalizedRole = roleBySignupInput[role as keyof typeof roleBySignupInput];
+    
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) throw new AppError("Email already registered.", 409, "EMAIL_EXISTS");
 
+    // Hash password and create user
     const hash = await bcrypt.hash(password, 12);
     const userId = uuidv4();
-    dbHelper.run("INSERT INTO users (id, email, password_hash, display_name, role) VALUES (?, ?, ?, ?, ?)", userId, email, hash, displayName, role);
+    const user = await prisma.user.create({
+      data: {
+        id: userId,
+        email,
+        passwordHash: hash,
+        name: displayName,
+        role: normalizedRole,
+      }
+    });
 
+    // Student profiles keep learning metadata separate from account credentials.
     if (role === "student") {
-      dbHelper.run("INSERT INTO student_profiles (id, user_id) VALUES (?, ?)", uuidv4(), userId);
+      await prisma.studentProfile.create({
+        data: {
+          id: uuidv4(),
+          userId,
+        }
+      });
     }
 
-    const { accessToken, refreshToken } = generateTokens(userId, email, role);
+    const { accessToken, refreshToken } = generateTokens(userId, email, normalizedRole);
     setAuthCookies(res, accessToken, refreshToken);
-    dbHelper.save();
 
-    res.status(201).json({ success: true, data: { user: { id: userId, email, displayName, role }, accessToken }, message: "Welcome to EduQuest!" });
+    res.status(201).json({ success: true, data: { user: toApiUser(user), accessToken }, message: "Welcome to EduQuest!" });
   } catch (error) { next(error); }
 });
 
 router.post("/signin", validate(signinSchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    const user = dbHelper.get("SELECT id, email, password_hash, display_name, role, is_active FROM users WHERE email = ?", email);
+    
+    // Find user by email
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new AppError("Invalid email or password.", 401, "INVALID_CREDENTIALS");
-    if (!user.is_active) throw new AppError("Account deactivated.", 403, "ACCOUNT_DEACTIVATED");
+    if (!user.isActive) throw new AppError("Account deactivated.", 403, "ACCOUNT_DEACTIVATED");
+    if (!user.passwordHash) throw new AppError("Invalid email or password.", 401, "INVALID_CREDENTIALS");
 
-    const valid = await bcrypt.compare(password, user.password_hash as string);
+    // Verify password
+    const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) throw new AppError("Invalid email or password.", 401, "INVALID_CREDENTIALS");
 
-    dbHelper.run("UPDATE users SET last_login_at = datetime('now') WHERE id = ?", user.id);
-    const { accessToken, refreshToken } = generateTokens(user.id as string, user.email as string, user.role as string);
-    setAuthCookies(res, accessToken, refreshToken);
-    dbHelper.save();
+    // Update last login time
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastActive: new Date() }
+    });
 
-    res.json({ success: true, data: { user: { id: user.id, email: user.email, displayName: user.display_name, role: user.role }, accessToken } });
+    const { accessToken, refreshToken } = generateTokens(user.id, user.email, user.role);
+    setAuthCookies(res, accessToken, refreshToken);
+
+    res.json({ success: true, data: { user: toApiUser(user), accessToken } });
   } catch (error) { next(error); }
 });
 
@@ -85,16 +133,16 @@ router.post("/signout", (_req: Request, res: Response) => {
   res.json({ success: true, message: "Logged out." });
 });
 
-router.get("/me", authenticate, (req: Request, res: Response, next: NextFunction) => {
+router.get("/me", authenticate, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = dbHelper.get(`
-      SELECT u.id, u.email, u.display_name, u.role, u.avatar_url, u.created_at,
-             sp.class_id, sp.stream, sp.board, sp.total_points, sp.current_level,
-             sp.current_streak, sp.longest_streak, sp.skill_level
-      FROM users u LEFT JOIN student_profiles sp ON sp.user_id = u.id WHERE u.id = ?
-    `, req.user!.userId);
+    const user = await prisma.user.findUnique({ 
+      where: { id: req.user!.userId },
+      include: {
+        studentProfile: true
+      }
+    });
     if (!user) throw new AppError("User not found.", 404, "USER_NOT_FOUND");
-    res.json({ success: true, data: { user } });
+    res.json({ success: true, data: { user: toApiUser(user) } });
   } catch (error) { next(error); }
 });
 

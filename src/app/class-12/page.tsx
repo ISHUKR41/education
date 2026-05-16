@@ -37,6 +37,10 @@ export default function Class12Page() {
                 <span className={styles.bannerStatValue}>5-6</span>
                 <span className={styles.bannerStatLabel}>Subjects / Stream</span>
               </div>
+              <div className={styles.bannerStat}>
+                <span className={styles.bannerStatValue}>100%</span>
+                <span className={styles.bannerStatLabel}>Route Ready</span>
+              </div>
             </div>
           </div>
         </div>

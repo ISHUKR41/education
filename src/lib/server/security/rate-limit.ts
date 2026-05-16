@@ -36,11 +36,19 @@ export type RateLimiterAdapterName = "memory-fixed-window" | "redis-fixed-window
 
 /**
  * Resolves which rate limiter should run in this environment.
- * Redis must be explicitly requested so local development does not fail when a
- * developer only wants to start the web app.
+ * Production defaults to Redis so rate limits work across multiple server
+ * instances. Local development keeps memory buckets unless Redis is requested.
  */
 export function getRateLimiterAdapterName(): RateLimiterAdapterName {
   if (process.env.EDUQUEST_RATE_LIMIT_ADAPTER === "redis") {
+    return "redis-fixed-window";
+  }
+
+  if (process.env.EDUQUEST_RATE_LIMIT_ADAPTER === "memory") {
+    return "memory-fixed-window";
+  }
+
+  if (process.env.NODE_ENV === "production") {
     return "redis-fixed-window";
   }
 

@@ -131,13 +131,10 @@
 /* Language cards grid */
 .langGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-10);
 }
-
-@media (min-width: 640px) { .langGrid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1024px) { .langGrid { grid-template-columns: repeat(4, 1fr); } }
 
 .langCard {
   display: flex;
@@ -204,12 +201,9 @@
 /* Skill cards */
 .skillGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--space-3);
 }
-
-@media (min-width: 640px) { .skillGrid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .skillGrid { grid-template-columns: repeat(3, 1fr); } }
 
 .skillCard {
   display: flex;

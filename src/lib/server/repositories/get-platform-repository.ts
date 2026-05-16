@@ -16,12 +16,20 @@ export type PersistenceAdapterName = "json-file-mvp" | "postgresql";
 
 /**
  * Resolves which persistence adapter this runtime should use.
- * Production can explicitly opt into PostgreSQL with EDUQUEST_PERSISTENCE_ADAPTER.
- * Local development keeps the JSON adapter by default so the app remains easy
- * to run even when PostgreSQL is not installed on the developer machine.
+ * Production defaults to PostgreSQL because local JSON files are not safe for
+ * multiple server instances, deploy rollbacks, or real student data. Local
+ * development keeps the JSON adapter by default so the app remains easy to run.
  */
 export function getPersistenceAdapterName(): PersistenceAdapterName {
   if (process.env.EDUQUEST_PERSISTENCE_ADAPTER === "postgres") {
+    return "postgresql";
+  }
+
+  if (process.env.EDUQUEST_PERSISTENCE_ADAPTER === "json") {
+    return "json-file-mvp";
+  }
+
+  if (process.env.NODE_ENV === "production") {
     return "postgresql";
   }
 

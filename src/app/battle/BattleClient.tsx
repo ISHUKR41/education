@@ -12,7 +12,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, Loader2, Swords, Trophy, TrendingUp, Target, Flame } from "lucide-react";
 import styles from "./Battle.module.css";
@@ -32,18 +32,61 @@ interface MatchmakingResponse {
   error?: { message: string };
 }
 
+/** Shape of the authenticated battle summary API response */
+interface BattleSummary {
+  totalTickets: number;
+  queuedTickets: number;
+  matchedTickets: number;
+  wins: number;
+  losses: number;
+  winRate: number | null;
+  categories: string[];
+}
+
+/** API envelope returned by GET /api/battles */
+interface BattleSummaryResponse {
+  ok: boolean;
+  data?: {
+    summary: BattleSummary;
+  };
+  error?: { message: string };
+}
+
+/** Minimal auth profile returned by GET /api/auth/me for the battle player card. */
+interface CurrentUserResponse {
+  ok: boolean;
+  data?: {
+    user: {
+      name: string;
+      level: number;
+    };
+  };
+}
+
 /* ==================== CONSTANTS ==================== */
 
 /** Available battle categories the user can select from */
 const CATEGORIES = ["All", "Mathematics", "Science", "English", "DSA", "Python", "C++"];
 
-/** Mock battle statistics — will be replaced by real API data later */
-const BATTLE_STATS = [
-  { value: "18", label: "Wins", icon: Trophy, color: "#10B981", bg: "#ECFDF5" },
-  { value: "7", label: "Losses", icon: Target, color: "#EF4444", bg: "#FEF2F2" },
-  { value: "72%", label: "Win Rate", icon: TrendingUp, color: "#4F46E5", bg: "#EEF2FF" },
-  { value: "5", label: "Win Streak", icon: Flame, color: "#D97706", bg: "#FFFBEB" },
-];
+const EMPTY_SUMMARY: BattleSummary = {
+  totalTickets: 0,
+  queuedTickets: 0,
+  matchedTickets: 0,
+  wins: 0,
+  losses: 0,
+  winRate: null,
+  categories: [],
+};
+
+/** Builds compact initials without exposing unnecessary profile details. */
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
 
 /* ==================== COMPONENT ==================== */
 
@@ -70,6 +113,54 @@ export default function BattleClient() {
 
   /* Server-assigned ticket ID after successful queue join */
   const [ticketId, setTicketId] = useState("");
+  const [summary, setSummary] = useState<BattleSummary>(EMPTY_SUMMARY);
+  const [player, setPlayer] = useState<{ initials: string; label: string; meta: string }>({
+    initials: "U",
+    label: "You",
+    meta: "Sign in required",
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadBattleSummary() {
+      try {
+        /*
+         * API call: GET /api/battles
+         * Why: shows stored battle queue data instead of hardcoded statistics.
+         * Guests simply see zeroed stats until they sign in and queue matches.
+         */
+        const response = await fetch("/api/battles", { cache: "no-store" });
+        const payload = (await response.json()) as BattleSummaryResponse;
+
+        if (isMounted && response.ok && payload.ok && payload.data?.summary) {
+          setSummary(payload.data.summary);
+        }
+
+        const meResponse = await fetch("/api/auth/me", { cache: "no-store" });
+        const mePayload = (await meResponse.json()) as CurrentUserResponse;
+
+        if (isMounted && meResponse.ok && mePayload.ok && mePayload.data?.user) {
+          setPlayer({
+            initials: getInitials(mePayload.data.user.name),
+            label: mePayload.data.user.name.split(" ")[0],
+            meta: `Level ${mePayload.data.user.level}`,
+          });
+        }
+      } catch {
+        /*
+         * The battle card still works without summary data. Matchmaking itself
+         * handles errors separately when the student presses Find Opponent.
+         */
+      }
+    }
+
+    loadBattleSummary();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   /**
    * Starts the matchmaking process by calling the protected backend API.
@@ -110,6 +201,14 @@ export default function BattleClient() {
       /* Matchmaking successful — show ticket info */
       setStatus("queued");
       setTicketId(payload.data.ticketId);
+      setSummary((current) => ({
+        ...current,
+        totalTickets: current.totalTickets + 1,
+        queuedTickets: current.queuedTickets + 1,
+        categories: current.categories.includes(payload.data!.category)
+          ? current.categories
+          : [...current.categories, payload.data!.category],
+      }));
       setMessage(`Queued for ${payload.data.category}. Estimated wait: ${payload.data.estimatedWaitSeconds}s.`);
     } catch {
       setStatus("error");
@@ -137,10 +236,10 @@ export default function BattleClient() {
                 className={styles.playerAvatar}
                 style={{ background: "linear-gradient(135deg, #3B82F6, #06B6D4)" }}
               >
-                AS
+                {player.initials}
               </div>
-              <span className={styles.playerName}>You</span>
-              <span className={styles.playerLevel}>Level 12</span>
+              <span className={styles.playerName}>{player.label}</span>
+              <span className={styles.playerLevel}>{player.meta}</span>
             </div>
 
             {/* VS separator */}
@@ -207,7 +306,12 @@ export default function BattleClient() {
 
         {/* ==================== BATTLE STATS ==================== */}
         <div className={styles.battleStats}>
-          {BATTLE_STATS.map((stat) => (
+          {[
+            { value: summary.totalTickets.toString(), label: "Tickets", icon: Trophy, color: "#10B981", bg: "#ECFDF5" },
+            { value: summary.queuedTickets.toString(), label: "Queued", icon: Target, color: "#EF4444", bg: "#FEF2F2" },
+            { value: summary.winRate === null ? "N/A" : `${summary.winRate}%`, label: "Win Rate", icon: TrendingUp, color: "#4F46E5", bg: "#EEF2FF" },
+            { value: summary.categories.length.toString(), label: "Categories", icon: Flame, color: "#D97706", bg: "#FFFBEB" },
+          ].map((stat) => (
             <div key={stat.label} className={styles.battleStatCard}>
               <div
                 className={styles.battleStatIcon}

@@ -41,10 +41,8 @@
 .subtitle { font-size: var(--font-size-body); color: rgba(255, 255, 255, 0.84); max-width: 560px; }
 
 .eventGrid {
-  display: grid; grid-template-columns: 1fr; gap: var(--space-6);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6);
 }
-@media (min-width: 768px) { .eventGrid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .eventGrid { grid-template-columns: repeat(3, 1fr); } }
 
 .eventCard {
   display: flex; flex-direction: column; background: var(--color-bg-card);
@@ -176,20 +174,8 @@
 
 .loadingGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-6);
-}
-
-@media (min-width: 768px) {
-  .loadingGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .loadingGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .loadingCard {

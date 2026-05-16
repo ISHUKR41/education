@@ -4,47 +4,108 @@
  */
 
 import { Router, Request, Response, NextFunction } from "express";
-import { dbHelper } from "../database/initialize";
+import prisma from "../database/prisma";
 import { authenticate, authorize } from "../middleware/auth.middleware";
 import { AppError } from "../middleware/error.middleware";
 
 const router = Router();
 
-router.get("/profile", authenticate, (req: Request, res: Response, next: NextFunction) => {
+router.get("/profile", authenticate, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = dbHelper.get(`
-      SELECT u.id, u.email, u.display_name, u.avatar_url, u.role, u.created_at,
-             sp.class_id, sp.stream, sp.board, sp.total_points, sp.current_level,
-             sp.current_streak, sp.longest_streak, sp.skill_level
-      FROM users u LEFT JOIN student_profiles sp ON sp.user_id = u.id WHERE u.id = ?
-    `, req.user!.userId);
+    const user = await prisma.user.findUnique({ 
+      where: { id: req.user!.userId },
+      include: {
+        studentProfile: true
+      }
+    });
     if (!user) throw new AppError("User not found.", 404, "USER_NOT_FOUND");
     res.json({ success: true, data: { user } });
   } catch (error) { next(error); }
 });
 
-router.patch("/profile", authenticate, (req: Request, res: Response, next: NextFunction) => {
+router.patch("/profile", authenticate, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { displayName, avatarUrl, classId, stream, board, skillLevel } = req.body;
-    if (displayName) dbHelper.run("UPDATE users SET display_name = ?, updated_at = datetime('now') WHERE id = ?", displayName, req.user!.userId);
-    if (avatarUrl) dbHelper.run("UPDATE users SET avatar_url = ?, updated_at = datetime('now') WHERE id = ?", avatarUrl, req.user!.userId);
-    if (classId) dbHelper.run("UPDATE student_profiles SET class_id = ?, updated_at = datetime('now') WHERE user_id = ?", classId, req.user!.userId);
-    if (stream) dbHelper.run("UPDATE student_profiles SET stream = ?, updated_at = datetime('now') WHERE user_id = ?", stream, req.user!.userId);
-    if (board) dbHelper.run("UPDATE student_profiles SET board = ?, updated_at = datetime('now') WHERE user_id = ?", board, req.user!.userId);
-    if (skillLevel) dbHelper.run("UPDATE student_profiles SET skill_level = ?, updated_at = datetime('now') WHERE user_id = ?", skillLevel, req.user!.userId);
-    dbHelper.save();
-    res.json({ success: true, message: "Profile updated." });
+    const {
+      displayName,
+      classId,
+      stream,
+      board,
+      skillLevel,
+      languagePreference,
+      phone,
+      parentPhone,
+      institution,
+    } = req.body;
+    const userId = req.user!.userId;
+    const userUpdates: { name?: string } = {};
+    const profileUpdates: {
+      classId?: string;
+      stream?: string;
+      board?: string;
+      skillLevel?: string;
+      languagePreference?: string;
+      phone?: string;
+      parentPhone?: string;
+      institution?: string;
+    } = {};
+
+    if (typeof displayName === "string" && displayName.trim()) userUpdates.name = displayName.trim();
+    if (typeof classId === "string" && classId.trim()) profileUpdates.classId = classId.trim();
+    if (typeof stream === "string" && stream.trim()) profileUpdates.stream = stream.trim();
+    if (typeof board === "string" && board.trim()) profileUpdates.board = board.trim();
+    if (typeof skillLevel === "string" && skillLevel.trim()) profileUpdates.skillLevel = skillLevel.trim();
+    if (typeof languagePreference === "string" && languagePreference.trim()) profileUpdates.languagePreference = languagePreference.trim();
+    if (typeof phone === "string" && phone.trim()) profileUpdates.phone = phone.trim();
+    if (typeof parentPhone === "string" && parentPhone.trim()) profileUpdates.parentPhone = parentPhone.trim();
+    if (typeof institution === "string" && institution.trim()) profileUpdates.institution = institution.trim();
+
+    // Keep account identity and learning-profile metadata in their own tables.
+    if (Object.keys(userUpdates).length > 0) {
+      await prisma.user.update({ where: { id: userId }, data: userUpdates });
+    }
+
+    if (Object.keys(profileUpdates).length > 0) {
+      await prisma.studentProfile.upsert({
+        where: { userId },
+        update: profileUpdates,
+        create: { userId, ...profileUpdates },
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { studentProfile: true },
+    });
+
+    res.json({ success: true, data: { user }, message: "Profile updated." });
   } catch (error) { next(error); }
 });
 
-router.get("/", authenticate, authorize("admin", "super_admin"), (req: Request, res: Response, next: NextFunction) => {
+router.get("/", authenticate, authorize("ADMIN", "SUPER_ADMIN"), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
     const offset = (page - 1) * limit;
-    const users = dbHelper.all("SELECT id, email, display_name, role, is_active, created_at FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?", limit, offset);
-    const total = dbHelper.get("SELECT COUNT(*) as count FROM users");
-    res.json({ success: true, data: { users, pagination: { page, limit, total: (total?.count as number) || 0 } } });
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          isActive: true,
+          currentLevel: true,
+          xp: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.user.count(),
+    ]);
+
+    res.json({ success: true, data: { users, pagination: { page, limit, total } } });
   } catch (error) { next(error); }
 });
 

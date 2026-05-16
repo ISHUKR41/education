@@ -84,20 +84,8 @@
 /* Methods grid — responsive 3-column layout. */
 .methodsGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .methodsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 960px) {
-  .methodsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 /* Individual method card — interactive with hover effects. */

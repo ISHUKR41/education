@@ -1,7 +1,8 @@
 /*
  * FILE: Community.module.css
- * PURPOSE: Community page styles — discussion forums, post cards, and categories.
- * USED BY: src/app/community/page.tsx
+ * PURPOSE: Community page styles — discussion forums, post cards, categories,
+ *          and route-local dynamic loading skeletons.
+ * USED BY: src/app/community/page.tsx, CommunityClient.tsx, and CommunityLoadingSkeleton.tsx
  */
 
 .page { padding: var(--space-8) 0 var(--space-16); }
@@ -148,3 +149,64 @@
 .postFooter { display: flex; gap: var(--space-4); }
 .postStat { display: flex; align-items: center; gap: var(--space-1); font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
 .postTag { display: inline-block; padding: 2px var(--space-2); background: var(--color-primary-lightest); color: var(--color-primary); border-radius: var(--radius-sm); font-size: var(--font-size-xsmall); font-weight: var(--font-weight-medium); margin-right: var(--space-2); }
+
+/* Dynamic route skeleton shown while the client-side Community bundle loads. */
+.loadingShell {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .loadingShell {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+}
+
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-lg);
+}
+
+.loadingTitle {
+  width: min(24rem, 70%);
+  height: 2rem;
+  margin-bottom: var(--space-3);
+}
+
+.loadingSubtitle {
+  width: min(38rem, 82%);
+  height: 1rem;
+  margin-bottom: var(--space-6);
+}
+
+.loadingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .loadingGrid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.loadingFeed {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.loadingPost {
+  min-height: 11.25rem;
+  border-radius: var(--radius-xl);
+}
+
+.loadingSidebar {
+  min-height: 23.75rem;
+  border-radius: var(--radius-xl);
+}

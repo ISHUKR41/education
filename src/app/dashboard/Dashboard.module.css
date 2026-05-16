@@ -61,13 +61,9 @@
 /* Stats grid */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-8);
-}
-
-@media (min-width: 768px) {
-  .statsGrid { grid-template-columns: repeat(4, 1fr); }
 }
 
 .statCard {
@@ -201,12 +197,8 @@
 /* Quick actions */
 .quickActions {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-3);
-}
-
-@media (min-width: 640px) {
-  .quickActions { grid-template-columns: repeat(2, 1fr); }
 }
 
 .actionCard {
@@ -385,15 +377,9 @@
 
 .loadingStatsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-8);
-}
-
-@media (min-width: 768px) {
-  .loadingStatsGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .loadingStat {
