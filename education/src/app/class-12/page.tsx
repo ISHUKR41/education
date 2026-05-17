@@ -21,25 +21,29 @@ export default function Class12Page() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <div className={styles.classBanner} style={{ background: "linear-gradient(135deg, #F59E0B, #F97316)" }}>
+        {/* Banner: no inline style — background handled entirely in Class12.module.css */}
+        <div className={styles.classBanner}>
           <div className={styles.bannerContent}>
-            <div className={styles.bannerLabel}><GraduationCap size={14} /> Board + Entrance Prep</div>
+            <div className={styles.bannerLabel}><GraduationCap size={14} /> Board + Entrance Prep · Class 12</div>
             <h1 className={styles.bannerTitle}>Class 12</h1>
             <p className={styles.bannerSubtitle}>
-              Master board exams and ace entrance tests with structured revision and mock tests.
+              Master board exams and crack entrance tests. Structured revision schedules,
+              mock tests, and formula revision for Science, Commerce, and Arts.
             </p>
             <div className={styles.bannerStats}>
               <div className={styles.bannerStat}>
                 <span className={styles.bannerStatValue}>3</span>
                 <span className={styles.bannerStatLabel}>Streams</span>
               </div>
+              <div className={styles.bannerDivider} aria-hidden="true" />
               <div className={styles.bannerStat}>
                 <span className={styles.bannerStatValue}>5-6</span>
                 <span className={styles.bannerStatLabel}>Subjects / Stream</span>
               </div>
+              <div className={styles.bannerDivider} aria-hidden="true" />
               <div className={styles.bannerStat}>
                 <span className={styles.bannerStatValue}>100%</span>
-                <span className={styles.bannerStatLabel}>Route Ready</span>
+                <span className={styles.bannerStatLabel}>Catalog Ready</span>
               </div>
             </div>
           </div>

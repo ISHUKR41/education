@@ -22,25 +22,29 @@ export default function Class11Page() {
     <div className={styles.page}>
       <div className={styles.inner}>
         {/* Banner */}
-        <div className={styles.classBanner} style={{ background: "linear-gradient(135deg, #10B981, #14B8A6)" }}>
+        {/* Banner: no inline style — background handled entirely in Class11.module.css */}
+        <div className={styles.classBanner}>
           <div className={styles.bannerContent}>
-            <div className={styles.bannerLabel}><GraduationCap size={14} /> Stream Selection</div>
+            <div className={styles.bannerLabel}><GraduationCap size={14} /> Stream Selection · Class 11</div>
             <h1 className={styles.bannerTitle}>Class 11</h1>
             <p className={styles.bannerSubtitle}>
-              Deep learning in your chosen stream — Science, Commerce, or Arts.
+              Go deep in your chosen stream — Science, Commerce, or Arts.
+              Structured subject plans built around your board and entrance goals.
             </p>
             <div className={styles.bannerStats}>
               <div className={styles.bannerStat}>
                 <span className={styles.bannerStatValue}>3</span>
                 <span className={styles.bannerStatLabel}>Streams</span>
               </div>
+              <div className={styles.bannerDivider} aria-hidden="true" />
               <div className={styles.bannerStat}>
                 <span className={styles.bannerStatValue}>5-6</span>
                 <span className={styles.bannerStatLabel}>Subjects / Stream</span>
               </div>
+              <div className={styles.bannerDivider} aria-hidden="true" />
               <div className={styles.bannerStat}>
                 <span className={styles.bannerStatValue}>100%</span>
-                <span className={styles.bannerStatLabel}>Route Ready</span>
+                <span className={styles.bannerStatLabel}>Catalog Ready</span>
               </div>
             </div>
           </div>

@@ -1,12 +1,14 @@
 /**
  * FILE: Class11StreamSelector.tsx
  * LOCATION: src/app/class-11/Class11StreamSelector.tsx
- * PURPOSE: Small client-only stream switcher for the Class 11 landing page.
- *          The route shell stays server-rendered while only tab state and the
- *          visible subject grid hydrate in the browser.
+ * PURPOSE: Client-only stream switcher for Class 11.
+ *          Server page (page.tsx) handles metadata and banner; this component
+ *          owns only tab state and the visible subject card grid.
+ *          Uses dark-compatible semi-transparent icon backgrounds that work on
+ *          the dark card surface (#161B22) without flashing light colors.
  * USED BY: src/app/class-11/page.tsx
  * DEPENDENCIES: react, next/link, lucide-react, Class11.module.css
- * LAST UPDATED: 2026-05-12
+ * LAST UPDATED: 2026-05-17
  */
 
 "use client";
@@ -32,60 +34,219 @@ import {
 } from "lucide-react";
 import styles from "./Class11.module.css";
 
+/*
+ * STREAMS data — Class 11 CBSE/ISC subject catalog.
+ * Each subject uses dark-compatible transparent backgrounds (bg) and borders.
+ * color = accent / icon color, bg = icon container fill (rgba transparent).
+ */
 const STREAMS = [
   {
     id: "science",
     name: "Science",
+    desc: "Physics, Chemistry, Maths/Bio, CS — JEE and NEET foundation.",
     subjects: [
-      { id: "physics", name: "Physics", icon: Atom, chapters: 15, progress: 20, color: "#3B82F6", bg: "#EFF6FF" },
-      { id: "chemistry", name: "Chemistry", icon: Beaker, chapters: 14, progress: 15, color: "#10B981", bg: "#ECFDF5" },
-      { id: "mathematics", name: "Mathematics", icon: Calculator, chapters: 16, progress: 25, color: "#8B5CF6", bg: "#F5F3FF" },
-      { id: "biology", name: "Biology", icon: Dna, chapters: 14, progress: 10, color: "#F59E0B", bg: "#FFFBEB" },
-      { id: "computer-science", name: "Computer Science", icon: Code2, chapters: 10, progress: 35, color: "#06B6D4", bg: "#ECFEFF" },
-      { id: "english", name: "English", icon: Languages, chapters: 12, progress: 40, color: "#EF4444", bg: "#FEF2F2" },
+      {
+        id: "physics",
+        name: "Physics",
+        desc: "Mechanics, thermodynamics, optics, electricity — formula-first approach.",
+        icon: Atom,
+        chapters: 15,
+        color: "#58A6FF",
+        bg: "rgba(88, 166, 255, 0.12)",
+        border: "rgba(88, 166, 255, 0.2)",
+      },
+      {
+        id: "chemistry",
+        name: "Chemistry",
+        desc: "Physical, organic, and inorganic — reactions, equations, periodic trends.",
+        icon: Beaker,
+        chapters: 14,
+        color: "#3FB950",
+        bg: "rgba(63, 185, 80, 0.12)",
+        border: "rgba(63, 185, 80, 0.2)",
+      },
+      {
+        id: "mathematics",
+        name: "Mathematics",
+        desc: "Calculus, algebra, trigonometry, vectors — deep problem solving.",
+        icon: Calculator,
+        chapters: 16,
+        color: "#BC8CFF",
+        bg: "rgba(188, 140, 255, 0.12)",
+        border: "rgba(188, 140, 255, 0.2)",
+      },
+      {
+        id: "biology",
+        name: "Biology",
+        desc: "Cell biology, genetics, human physiology, ecology — NEET prep.",
+        icon: Dna,
+        chapters: 14,
+        color: "#F0883E",
+        bg: "rgba(240, 136, 62, 0.12)",
+        border: "rgba(240, 136, 62, 0.2)",
+      },
+      {
+        id: "computer-science",
+        name: "Computer Science",
+        desc: "Python, data structures, SQL, networks — CBSE CS full syllabus.",
+        icon: Code2,
+        chapters: 10,
+        color: "#79C0FF",
+        bg: "rgba(121, 192, 255, 0.12)",
+        border: "rgba(121, 192, 255, 0.2)",
+      },
+      {
+        id: "english",
+        name: "English",
+        desc: "Hornbill, Snapshots — literature, grammar, and writing skills.",
+        icon: Languages,
+        chapters: 12,
+        color: "#F85149",
+        bg: "rgba(248, 81, 73, 0.12)",
+        border: "rgba(248, 81, 73, 0.2)",
+      },
     ],
   },
   {
     id: "commerce",
     name: "Commerce",
+    desc: "Accountancy, Business Studies, Economics, Maths — CA/MBA foundation.",
     subjects: [
-      { id: "accountancy", name: "Accountancy", icon: Receipt, chapters: 12, progress: 30, color: "#10B981", bg: "#ECFDF5" },
-      { id: "business-studies", name: "Business Studies", icon: Briefcase, chapters: 12, progress: 20, color: "#3B82F6", bg: "#EFF6FF" },
-      { id: "economics", name: "Economics", icon: TrendingUp, chapters: 10, progress: 25, color: "#F59E0B", bg: "#FFFBEB" },
-      { id: "mathematics", name: "Mathematics", icon: Calculator, chapters: 16, progress: 15, color: "#8B5CF6", bg: "#F5F3FF" },
-      { id: "english", name: "English", icon: Languages, chapters: 12, progress: 45, color: "#EF4444", bg: "#FEF2F2" },
+      {
+        id: "accountancy",
+        name: "Accountancy",
+        desc: "Journal entries, ledgers, trial balance, final accounts — CBSE board prep.",
+        icon: Receipt,
+        chapters: 12,
+        color: "#3FB950",
+        bg: "rgba(63, 185, 80, 0.12)",
+        border: "rgba(63, 185, 80, 0.2)",
+      },
+      {
+        id: "business-studies",
+        name: "Business Studies",
+        desc: "Nature of business, management, organizing, controlling — long-answer focused.",
+        icon: Briefcase,
+        chapters: 12,
+        color: "#58A6FF",
+        bg: "rgba(88, 166, 255, 0.12)",
+        border: "rgba(88, 166, 255, 0.2)",
+      },
+      {
+        id: "economics",
+        name: "Economics",
+        desc: "Micro and macro economics — demand, supply, national income, money.",
+        icon: TrendingUp,
+        chapters: 10,
+        color: "#F0883E",
+        bg: "rgba(240, 136, 62, 0.12)",
+        border: "rgba(240, 136, 62, 0.2)",
+      },
+      {
+        id: "mathematics",
+        name: "Mathematics",
+        desc: "Applied maths for commerce — matrices, linear programming, statistics.",
+        icon: Calculator,
+        chapters: 16,
+        color: "#BC8CFF",
+        bg: "rgba(188, 140, 255, 0.12)",
+        border: "rgba(188, 140, 255, 0.2)",
+      },
+      {
+        id: "english",
+        name: "English",
+        desc: "Hornbill, Snapshots — literature comprehension and advanced writing.",
+        icon: Languages,
+        chapters: 12,
+        color: "#F85149",
+        bg: "rgba(248, 81, 73, 0.12)",
+        border: "rgba(248, 81, 73, 0.2)",
+      },
     ],
   },
   {
     id: "arts",
     name: "Arts / Humanities",
+    desc: "History, Geography, Polity, Sociology, Psychology — UPSC and university prep.",
     subjects: [
-      { id: "history", name: "History", icon: Clock, chapters: 11, progress: 10, color: "#F59E0B", bg: "#FFFBEB" },
-      { id: "geography", name: "Geography", icon: MapPin, chapters: 10, progress: 20, color: "#10B981", bg: "#ECFDF5" },
-      { id: "political-science", name: "Political Science", icon: Landmark, chapters: 10, progress: 15, color: "#3B82F6", bg: "#EFF6FF" },
-      { id: "sociology", name: "Sociology", icon: Users, chapters: 10, progress: 5, color: "#8B5CF6", bg: "#F5F3FF" },
-      { id: "psychology", name: "Psychology", icon: Brain, chapters: 10, progress: 12, color: "#EF4444", bg: "#FEF2F2" },
-      { id: "english", name: "English", icon: Languages, chapters: 12, progress: 40, color: "#06B6D4", bg: "#ECFEFF" },
+      {
+        id: "history",
+        name: "History",
+        desc: "Ancient, medieval, and modern India — source-based and essay questions.",
+        icon: Clock,
+        chapters: 11,
+        color: "#F0883E",
+        bg: "rgba(240, 136, 62, 0.12)",
+        border: "rgba(240, 136, 62, 0.2)",
+      },
+      {
+        id: "geography",
+        name: "Geography",
+        desc: "Physical geography, India's geography, map marking — CBSE board ready.",
+        icon: MapPin,
+        chapters: 10,
+        color: "#3FB950",
+        bg: "rgba(63, 185, 80, 0.12)",
+        border: "rgba(63, 185, 80, 0.2)",
+      },
+      {
+        id: "political-science",
+        name: "Political Science",
+        desc: "Indian constitution, governance, international relations — long answers.",
+        icon: Landmark,
+        chapters: 10,
+        color: "#58A6FF",
+        bg: "rgba(88, 166, 255, 0.12)",
+        border: "rgba(88, 166, 255, 0.2)",
+      },
+      {
+        id: "sociology",
+        name: "Sociology",
+        desc: "Indian society, social institutions, change and development.",
+        icon: Users,
+        chapters: 10,
+        color: "#BC8CFF",
+        bg: "rgba(188, 140, 255, 0.12)",
+        border: "rgba(188, 140, 255, 0.2)",
+      },
+      {
+        id: "psychology",
+        name: "Psychology",
+        desc: "Human development, motivation, cognition, perception — theory + application.",
+        icon: Brain,
+        chapters: 10,
+        color: "#F85149",
+        bg: "rgba(248, 81, 73, 0.12)",
+        border: "rgba(248, 81, 73, 0.2)",
+      },
+      {
+        id: "english",
+        name: "English",
+        desc: "Hornbill, Snapshots — literature, grammar, creative writing.",
+        icon: Languages,
+        chapters: 12,
+        color: "#79C0FF",
+        bg: "rgba(121, 192, 255, 0.12)",
+        border: "rgba(121, 192, 255, 0.2)",
+      },
     ],
   },
 ] as const;
 
-/** Renders the interactive stream tabs and subject cards for Class 11. */
+/** Class 11 interactive stream selector — tabs + subject cards */
 export default function Class11StreamSelector() {
   const [activeStream, setActiveStream] = useState<(typeof STREAMS)[number]["id"]>("science");
-  const currentStream = STREAMS.find((stream) => stream.id === activeStream) ?? STREAMS[0];
+  const currentStream = STREAMS.find((s) => s.id === activeStream) ?? STREAMS[0];
 
   return (
-    <>
-      <div className={styles.streamSummary}>
-        <span>{currentStream.name}</span>
-        <strong>{currentStream.subjects.length} subjects ready</strong>
-      </div>
-
-      <div className={styles.streamTabs}>
+    <div className={styles.streamSection}>
+      {/* Stream tab bar */}
+      <div className={styles.streamTabs} role="tablist">
         {STREAMS.map((stream) => (
           <button
             key={stream.id}
+            role="tab"
+            aria-selected={activeStream === stream.id}
             className={`${styles.streamTab} ${activeStream === stream.id ? styles.streamTabActive : ""}`}
             onClick={() => setActiveStream(stream.id)}
           >
@@ -94,43 +255,51 @@ export default function Class11StreamSelector() {
         ))}
       </div>
 
-      <div className={styles.subjectGrid}>
+      {/* Subject cards grid for the active stream */}
+      <div className={styles.streamGrid} role="tabpanel">
         {currentStream.subjects.map((subject) => {
           const SubjectIcon = subject.icon;
-          const completedChapters = Math.round((subject.chapters * subject.progress) / 100);
-
           return (
             <Link
               key={subject.id}
               href={`/class-11/${currentStream.id}/${subject.id}`}
               className={styles.subjectCard}
             >
-              <div className={styles.subjectCardHeader}>
-                <div className={styles.subjectIcon} style={{ background: subject.bg, color: subject.color }}>
-                  <SubjectIcon size={22} />
+              {/* Thin colored left accent bar */}
+              <div
+                className={styles.cardAccent}
+                style={{ background: subject.color }}
+                aria-hidden="true"
+              />
+
+              {/* Icon + name row */}
+              <div className={styles.cardHeader}>
+                <div
+                  className={styles.subjectIcon}
+                  style={{ background: subject.bg, border: `1px solid ${subject.border}` }}
+                  aria-hidden="true"
+                >
+                  <SubjectIcon size={20} color={subject.color} />
                 </div>
-                <div>
+                <div className={styles.cardMeta}>
                   <h3 className={styles.subjectName}>{subject.name}</h3>
-                  <span className={styles.subjectMeta}>{subject.chapters} Chapters</span>
+                  <span className={styles.chapterCount}>{subject.chapters} chapters</span>
                 </div>
               </div>
-              <div className={styles.subjectProgress}>
-                <div className={styles.progressBar}>
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${subject.progress}%`, background: subject.color }}
-                  />
-                </div>
-                <div className={styles.progressText}>
-                  <span>{subject.progress}% Complete</span>
-                  <span>{completedChapters}/{subject.chapters}</span>
-                </div>
+
+              {/* Short description */}
+              <p className={styles.subjectDesc}>{subject.desc}</p>
+
+              {/* Explore arrow */}
+              <div className={styles.cardFooter}>
+                <span className={styles.cardArrow} style={{ color: subject.color }}>
+                  Explore <ArrowRight size={13} />
+                </span>
               </div>
-              <div className={styles.subjectFooter}>Continue <ArrowRight size={14} /></div>
             </Link>
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
