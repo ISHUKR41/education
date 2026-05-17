@@ -16,7 +16,7 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUser } from "@/lib/server/auth/current-user";
-import { pool } from "@/lib/server/database/pool";
+import { getPostgresPool } from "@/lib/server/database/postgres";
 
 /* Force Node.js runtime — required for the pg pool and crypto-based session reading */
 export const runtime = "nodejs";
@@ -59,6 +59,8 @@ export async function GET(request: NextRequest) {
       { status: 401, headers: NO_STORE },
     );
   }
+
+  const pool = getPostgresPool();
 
   try {
     /*
@@ -149,6 +151,8 @@ export async function PATCH(request: NextRequest) {
       { status: 401, headers: NO_STORE },
     );
   }
+
+  const pool = getPostgresPool();
 
   try {
     const result = await pool.query(

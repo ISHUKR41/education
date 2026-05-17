@@ -17,7 +17,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Menu, X, Sun, Moon, Home, BookOpen, GraduationCap,
   ClipboardCheck, Code2, LayoutDashboard, LogOut, Users, Trophy, Zap, Swords, BarChart3,
-  ChevronDown, type LucideIcon
+  ChevronDown, UserCircle, type LucideIcon
 } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import styles from "./Navbar.module.css";
@@ -368,13 +368,16 @@ function NavbarShell({ pathname }: NavbarShellProps) {
               <span className={styles.accountSkeleton} aria-hidden="true" />
             ) : sessionState === "authenticated" ? (
               <>
+                <Link href="/profile" className={styles.profileBtn}>
+                  <UserCircle size={16} />
+                  Profile
+                </Link>
                 <Link href="/dashboard" className={styles.dashboardBtn}>
                   <LayoutDashboard size={16} />
                   Dashboard
                 </Link>
                 <button className={styles.signOutBtn} onClick={handleSignOut}>
                   <LogOut size={16} />
-                  Sign Out
                 </button>
               </>
             ) : (
@@ -448,6 +451,10 @@ function NavbarShell({ pathname }: NavbarShellProps) {
                 <span className={styles.mobileAccountSkeleton} aria-hidden="true" />
               ) : sessionState === "authenticated" ? (
                 <>
+                  <Link href="/profile" className={styles.mobileDashboard} onClick={closeMobileMenu}>
+                    <UserCircle size={18} />
+                    Profile
+                  </Link>
                   <Link href="/dashboard" className={styles.mobileDashboard} onClick={closeMobileMenu}>
                     <LayoutDashboard size={18} />
                     Dashboard
