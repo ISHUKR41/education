@@ -1,0 +1,13 @@
+kind = "web"
+title = "EduQuest"
+previewPath = "/"
+version = 2
+
+[[services]]
+name = "web"
+localPort = 3000
+paths = ["/"]
+
+[[services.devCommand]]
+args = ["npm", "run", "dev", "--", "--port", "3000"]
+workingDir = "education"

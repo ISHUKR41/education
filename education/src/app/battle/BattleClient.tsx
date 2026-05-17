@@ -307,10 +307,11 @@ export default function BattleClient() {
         {/* ==================== BATTLE STATS ==================== */}
         <div className={styles.battleStats}>
           {[
-            { value: summary.totalTickets.toString(), label: "Tickets", icon: Trophy, color: "#10B981", bg: "#ECFDF5" },
-            { value: summary.queuedTickets.toString(), label: "Queued", icon: Target, color: "#EF4444", bg: "#FEF2F2" },
-            { value: summary.winRate === null ? "N/A" : `${summary.winRate}%`, label: "Win Rate", icon: TrendingUp, color: "#4F46E5", bg: "#EEF2FF" },
-            { value: summary.categories.length.toString(), label: "Categories", icon: Flame, color: "#D97706", bg: "#FFFBEB" },
+            /* Dark-theme stat colors: semi-transparent bg + matching foreground */
+            { value: summary.totalTickets.toString(), label: "Tickets", icon: Trophy, color: "#3FB950", bg: "rgba(63, 185, 80, 0.15)" },
+            { value: summary.queuedTickets.toString(), label: "Queued", icon: Target, color: "#F85149", bg: "rgba(248, 81, 73, 0.15)" },
+            { value: summary.winRate === null ? "N/A" : `${summary.winRate}%`, label: "Win Rate", icon: TrendingUp, color: "#58A6FF", bg: "rgba(88, 166, 255, 0.15)" },
+            { value: summary.categories.length.toString(), label: "Categories", icon: Flame, color: "#D29922", bg: "rgba(210, 153, 34, 0.15)" },
           ].map((stat) => (
             <div key={stat.label} className={styles.battleStatCard}>
               <div

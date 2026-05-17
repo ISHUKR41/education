@@ -38,11 +38,17 @@ const STAT_ICONS = {
   rank: Trophy,
 } as const;
 
+/*
+ * STAT_COLORS: Per-metric icon background + foreground color pairs.
+ * These use the EduQuest dark theme palette from globals.css.
+ * bg = semi-transparent background for the icon box
+ * color = the icon and value tint color
+ */
 const STAT_COLORS = {
-  streak: { color: "#D97706", bg: "#FFFBEB" },
-  xp: { color: "#4F46E5", bg: "#EEF2FF" },
-  battle: { color: "#DC2626", bg: "#FEF2F2" },
-  rank: { color: "#059669", bg: "#ECFDF5" },
+  streak: { color: "#D29922", bg: "rgba(210, 153, 34, 0.15)" },   /* Orange-yellow for fire/streak */
+  xp: { color: "#58A6FF", bg: "rgba(88, 166, 255, 0.15)" },       /* Electric blue for XP/points */
+  battle: { color: "#F85149", bg: "rgba(248, 81, 73, 0.15)" },    /* Red for battles/combat */
+  rank: { color: "#3FB950", bg: "rgba(63, 185, 80, 0.15)" },      /* Green for rank/achievement */
 } as const;
 
 const ACTION_ICONS = {
@@ -52,11 +58,16 @@ const ACTION_ICONS = {
   community: Users,
 } as const;
 
+/*
+ * ACTIVITY_COLORS: Dot indicator colors for the recent activity feed.
+ * Single hex values — applied as the dot's background-color.
+ * All colors match the dark theme design system.
+ */
 const ACTIVITY_COLORS = {
-  success: "#10B981",
-  battle: "#EF4444",
-  streak: "#F59E0B",
-  learn: "#4F46E5",
+  success: "#3FB950",  /* Green — completed lessons, correct answers */
+  battle: "#F85149",   /* Red — battle events, defeats */
+  streak: "#D29922",   /* Amber — streak updates, fire events */
+  learn: "#58A6FF",    /* Blue — learning activity, new chapters */
 } as const;
 
 interface DashboardApiResponse {

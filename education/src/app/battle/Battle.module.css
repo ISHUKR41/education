@@ -1,142 +1,339 @@
 /*
  * FILE: Battle.module.css
- * PURPOSE: Battle Arena page styles — matchmaking UI, battle stats, opponent
- *          display, and route-local dynamic loading skeletons.
- * USED BY: src/app/battle/page.tsx, BattleClient.tsx, and BattleLoadingSkeleton.tsx
+ * LOCATION: src/app/battle/Battle.module.css
+ * PURPOSE: All styles for the Battle Arena page. Class names exactly match
+ *          the styles object access in BattleClient.tsx — never rename a class
+ *          here without updating the component too.
+ *          Dark theme; all color values from globals.css.
+ * USED BY: src/app/battle/BattleClient.tsx, BattleLoadingSkeleton.tsx
+ * LAST UPDATED: 2026-05-17
+ * CLASS INVENTORY:
+ *   page, inner, header, title, subtitle,
+ *   matchCard, vsRow, player, playerAvatar, playerName, playerLevel,
+ *   vsText, categories, categoryBtn, categoryBtnActive,
+ *   startBtn, spinner, matchStatus, matchStatusSuccess, matchStatusError,
+ *   battleStats, battleStatCard, battleStatIcon, battleStatValue, battleStatLabel
  */
 
-.page { padding: var(--space-8) 0 var(--space-16); }
-.inner { max-width: 720px; margin: 0 auto; padding: 0 var(--space-4); text-align: center; }
+/* ─── SPINNER ANIMATION ─── */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-.header { margin-bottom: var(--space-8); }
-.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
-.subtitle { font-size: var(--font-size-body); color: var(--color-text-secondary); }
-
-/* Matchmaking card */
-.matchCard {
-  padding: var(--space-10); background: var(--color-bg-card);
-  border: 1px solid var(--color-border); border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-lg); margin-bottom: var(--space-8);
+/* ─── PAGE WRAPPER ─── */
+.page {
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--color-bg-primary);
+  padding: var(--space-8) 0 var(--space-16);
 }
 
-.vsRow { display: flex; align-items: center; justify-content: center; gap: var(--space-6); margin-bottom: var(--space-8); flex-wrap: wrap; }
-
-.player {
-  display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
-}
-.playerAvatar {
-  width: 5rem; height: 5rem; border-radius: var(--radius-full);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-family-heading); font-size: 1.5rem;
-  font-weight: var(--font-weight-bold); color: white;
-}
-.playerName { font-weight: var(--font-weight-semibold); font-size: var(--font-size-body); }
-.playerLevel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
-
-.vsText {
-  font-family: var(--font-family-heading); font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-extrabold); color: var(--color-danger);
-  text-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
-}
-
-/* Category selector */
-.categories {
-  display: flex; flex-wrap: wrap; gap: var(--space-2);
-  justify-content: center; margin-bottom: var(--space-6);
-}
-.categoryBtn {
-  padding: var(--space-2) var(--space-4); font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium); border-radius: var(--radius-full);
-  background: var(--color-bg-secondary); border: 1px solid var(--color-border);
-  color: var(--color-text-secondary); transition: all var(--transition-fast); cursor: pointer;
-}
-.categoryBtn:hover { border-color: var(--color-primary-lighter); color: var(--color-primary); }
-.categoryBtnActive { background: var(--color-primary); color: white; border-color: var(--color-primary); }
-
-/* Start battle button */
-.startBtn {
-  display: inline-flex; align-items: center; gap: var(--space-2);
-  padding: var(--space-4) var(--space-10);
-  background: linear-gradient(135deg, #EF4444, #F97316);
-  color: white; font-size: var(--font-size-h4); font-weight: var(--font-weight-bold);
-  border-radius: var(--radius-xl); transition: all var(--transition-normal);
-  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
-}
-.startBtn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(239, 68, 68, 0.4); }
-.startBtn:disabled { opacity: 0.72; cursor: wait; }
-
-.spinner { animation: spin 0.8s linear infinite; }
-
-.matchStatus {
-  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
-  gap: var(--space-2); margin-top: var(--space-5); padding: var(--space-3);
-  border-radius: var(--radius-lg); font-size: var(--font-size-small);
-}
-.matchStatusSuccess { color: #047857; background: #ECFDF5; border: 1px solid #A7F3D0; }
-.matchStatusError { color: #B91C1C; background: #FEF2F2; border: 1px solid #FECACA; }
-.matchStatus code { font-family: var(--font-family-code); font-size: var(--font-size-xsmall); opacity: 0.75; }
-.matchStatus a { font-weight: var(--font-weight-semibold); text-decoration: underline; }
-
-/* Stats cards */
-.battleStats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-4);
-}
-
-.battleStatCard {
-  padding: var(--space-4); background: var(--color-bg-card);
-  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
-  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
-}
-.battleStatIcon {
-  width: 2.5rem; height: 2.5rem; border-radius: var(--radius-full);
-  display: flex; align-items: center; justify-content: center;
-}
-.battleStatValue {
-  font-family: var(--font-family-stats); font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
-}
-.battleStatLabel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); text-transform: uppercase; }
-
-/* Dynamic route skeleton shown while the client-side Battle bundle loads. */
-.loadingShell {
-  width: 100%;
-  max-width: 720px;
+/* ─── CONTENT CONTAINER ─── */
+.inner {
+  max-width: 860px;
   margin: 0 auto;
-  padding: var(--space-8) var(--space-4) var(--space-16);
+  padding: 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
 }
 
-.skeletonShimmer {
-  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--radius-lg);
+@media (min-width: 768px) { .inner { padding: 0 var(--space-6); } }
+
+/* ─── PAGE HEADER ─── */
+/* Centered text header above the matchmaking card */
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
 }
 
-.loadingTitle {
-  width: min(18rem, 70%);
-  height: 2rem;
-  margin: 0 auto var(--space-2);
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--text-h1);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
 }
 
-.loadingSubtitle {
-  width: min(26rem, 80%);
-  height: 1rem;
-  margin: 0 auto var(--space-8);
+.subtitle {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  max-width: 500px;
+  line-height: var(--lh-relaxed);
 }
 
-.loadingMatchCard {
-  width: 100%;
-  min-height: 17.5rem;
-  margin-bottom: var(--space-8);
+/* ─── MATCHMAKING CARD ─── */
+/* The main interactive card — players VS display + category selector + start button */
+.matchCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
+  /* Subtle gradient border glow on the card */
+  box-shadow: 0 0 0 1px var(--color-border-light), var(--shadow-md);
 }
 
-.loadingStatsGrid {
+/* ─── VS ROW ─── */
+/* Left player — VS text — right opponent side by side */
+.vsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+/* Each player block: avatar + name + level label stacked vertically */
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Gradient circle avatar with large bold initials */
+.playerAvatar {
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  /* Gradient is applied via inline style in the component */
+}
+
+.playerName {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+
+.playerLevel {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* VS separator text between the two player blocks */
+.vsText {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.05em;
+  /* Gradient text on the VS to make it pop */
+  background: linear-gradient(135deg, #F85149, #D29922);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── CATEGORY PILLS ─── */
+/* Scrollable horizontal row of subject/category filter buttons */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+/* Individual category pill */
+.categoryBtn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.categoryBtn:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+/* Selected/active category */
+.categoryBtnActive {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--color-primary-border) !important;
+  color: var(--color-primary) !important;
+}
+
+/* ─── FIND OPPONENT BUTTON ─── */
+/* Large full-width red CTA button — initiates matchmaking */
+.startBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-danger);
+  color: white;
+  font-size: 1.0625rem;
+  font-weight: var(--fw-semibold);
+  border: none;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+  letter-spacing: 0.02em;
+}
+
+.startBtn:hover {
+  background: var(--color-danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(248, 81, 73, 0.4);
+}
+
+.startBtn:active { transform: translateY(0); }
+
+.startBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Rotating loader icon inside the button while searching */
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+/* ─── MATCH STATUS MESSAGE ─── */
+/* Appears after the user clicks Find Opponent — shows queue status or error */
+.matchStatus {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  line-height: var(--lh-snug);
+}
+
+/* Queued successfully — green tint */
+.matchStatusSuccess {
+  background: var(--color-success-dim);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success);
+}
+
+/* Error — red tint */
+.matchStatusError {
+  background: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+}
+
+/* ─── BATTLE STATS CARDS ─── */
+/* Four metric cards shown below the matchmaking card */
+.battleStats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
 }
 
+@media (min-width: 640px) {
+  .battleStats { grid-template-columns: repeat(4, 1fr); }
+}
+
+.battleStatCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.battleStatCard:hover {
+  border-color: var(--color-border-strong);
+  transform: translateY(-2px);
+}
+
+/* Icon box — bg and color set via inline style from the stat array */
+.battleStatIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+}
+
+.battleStatValue {
+  font-family: var(--font-mono);
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.battleStatLabel {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── DYNAMIC LOADING SKELETON (BattleLoadingSkeleton.tsx) ─── */
+.loadingShell {
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--color-bg-primary);
+  padding: var(--space-8) var(--space-4) var(--space-16);
+  max-width: 860px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: var(--space-8);
+}
+
+.loadingTitle {
+  height: 2.5rem; width: 50%; margin: 0 auto;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md);
+}
+
+.loadingSubtitle {
+  height: 1.25rem; width: 70%; margin: 0 auto;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md);
+}
+
+.loadingMatchCard {
+  height: 340px;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-2xl);
+}
+
+.loadingStatsGrid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4);
+}
+@media (min-width: 640px) { .loadingStatsGrid { grid-template-columns: repeat(4, 1fr); } }
+
 .loadingStat {
-  min-height: 6.25rem;
+  height: 120px;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-xl);
+}
+
+/* Generic shimmer block — used for any element that needs skeleton loading */
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-lg);
 }

@@ -63,23 +63,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-        }}
-      >
-        {/* Global Navigation Bar — appears on every page */}
+    /*
+     * data-theme="dark" is intentional — EduQuest uses the dark (#0D1117) theme
+     * as the primary brand experience per the EduBattle MCP specification.
+     * This is NOT a user preference toggle; it is the platform's visual identity.
+     */
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      {/*
+       * Body: flex column so the footer always sticks to the bottom
+       * even on short pages that don't fill the full viewport.
+       * The background-color comes from globals.css var(--color-bg-primary).
+       */}
+      <body style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        {/* ── Persistent top navigation bar — appears on every single page ── */}
         <Navbar />
 
-        {/* Main Content Area — each page renders here */}
+        {/* ── Main content area — each page renders its unique content here ── */}
         <main style={{ flex: 1 }}>
           {children}
         </main>
 
-        {/* Global Footer — appears on every page */}
+        {/* ── Persistent site-wide footer ── */}
         <Footer />
       </body>
     </html>

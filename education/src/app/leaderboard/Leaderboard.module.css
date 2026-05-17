@@ -1,181 +1,333 @@
 /*
  * FILE: Leaderboard.module.css
- * PURPOSE: Leaderboard page styles — rankings table, top 3 podium, filter tabs,
- *          loading/error empty states, and route-local dynamic loading skeletons.
- * USED BY: src/app/leaderboard/page.tsx, LeaderboardClient.tsx, and LeaderboardLoadingSkeleton.tsx
+ * LOCATION: src/app/leaderboard/Leaderboard.module.css
+ * PURPOSE: All styles for the Leaderboard page. Class names exactly match the
+ *          styles object access in LeaderboardClient.tsx.
+ *          Dark theme; all color values from globals.css.
+ * USED BY: src/app/leaderboard/LeaderboardClient.tsx, LeaderboardLoadingSkeleton.tsx
+ * LAST UPDATED: 2026-05-17
+ * CLASS INVENTORY:
+ *   page, inner, header, title, subtitle,
+ *   filters, filterBtn, filterBtnActive,
+ *   podium, podiumItem, podiumFirst, podiumAvatar, podiumRank, podiumName, podiumXP,
+ *   table, tableRow, tableRowSelf,
+ *   rank, rankTop, userAvatar, userName, userLevel, userXP,
+ *   statePanel, spinner
  */
 
-.page { padding: var(--space-8) 0 var(--space-16); }
-.inner { max-width: 900px; margin: 0 auto; padding: 0 var(--space-4); }
+/* ─── ANIMATIONS ─── */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
-.header { text-align: center; margin-bottom: var(--space-8); }
-.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
-.subtitle { color: var(--color-text-secondary); }
+/* ─── PAGE WRAPPER ─── */
+.page {
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--color-bg-primary);
+  padding: var(--space-8) 0 var(--space-16);
+}
 
-/* Filter tabs */
-.filters { display: flex; justify-content: center; gap: var(--space-2); margin-bottom: var(--space-8); flex-wrap: wrap; }
+/* ─── CONTENT CONTAINER ─── */
+.inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) { .inner { padding: 0 var(--space-6); } }
+
+/* ─── PAGE HEADER ─── */
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--text-h1);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  max-width: 480px;
+  line-height: var(--lh-relaxed);
+}
+
+/* ─── FILTER TAB ROW ─── */
+/* Horizontal row of scope buttons — Global, Class 9, Class 10, etc. */
+.filters {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .filterBtn {
-  padding: var(--space-2) var(--space-4); font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium); border-radius: var(--radius-full);
-  background: var(--color-bg-card); border: 1px solid var(--color-border);
-  color: var(--color-text-secondary); transition: all var(--transition-fast); cursor: pointer;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
-.filterBtn:hover { border-color: var(--color-primary-lighter); color: var(--color-primary); }
-.filterBtnActive { background: var(--color-primary); color: white; border-color: var(--color-primary); }
 
-/* Top 3 podium */
-.podium { display: flex; align-items: flex-end; justify-content: center; gap: var(--space-4); margin-bottom: var(--space-8); }
-.podiumItem { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.filterBtn:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.filterBtnActive {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--color-primary-border) !important;
+  color: var(--color-primary) !important;
+}
+
+/* ─── TOP 3 PODIUM ─── */
+/* Side-by-side cards for ranks 1, 2, 3 — rank 1 (podiumFirst) is taller */
+.podium {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.podiumItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  min-width: 130px;
+  text-align: center;
+  transition: border-color var(--transition-fast);
+}
+
+.podiumItem:hover {
+  border-color: var(--color-border-strong);
+}
+
+/* Rank #1 card — gold-tinted border and larger padding */
+.podiumFirst {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(88, 166, 255, 0.04));
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  padding-top: var(--space-6);
+}
+
+/* Avatar circle — gradient background applied via inline style */
 .podiumAvatar {
-  width: 4rem; height: 4rem; border-radius: var(--radius-full);
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-weight: var(--font-weight-bold); font-size: 1.25rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
 }
-.podiumFirst .podiumAvatar { width: 5rem; height: 5rem; font-size: 1.5rem; }
+
+/* Rank number label — e.g. "1", "2", "3" */
 .podiumRank {
-  font-family: var(--font-family-stats); font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-elevated);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
 }
-.podiumName { font-weight: var(--font-weight-medium); font-size: var(--font-size-small); }
-.podiumXP { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
-.podiumMedal { font-size: 1.5rem; }
 
-/* Rankings table */
+.podiumName {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+
+.podiumXP {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+}
+
+/* ─── RANKINGS TABLE ─── */
+/* Flat list of row cards for ranks 4+ */
 .table {
-  width: 100%; background: var(--color-bg-card); border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl); overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
+/* Single row in the rankings list */
+.tableRow {
+  display: grid;
+  /* rank | avatar | name | level | XP */
+  grid-template-columns: 56px 2.5rem 1fr auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tableRow:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-strong);
+}
+
+/* Highlighted row — the currently signed-in user */
+.tableRowSelf {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--color-primary-border) !important;
+}
+
+/* Rank number column — monospace for consistent digit alignment */
+.rank {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+/* Ranks 4-10 get a slightly warmer tint */
+.rankTop {
+  color: var(--color-warning);
+}
+
+/* Avatar circle — gradient background via inline style */
+.userAvatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: white;
+  flex-shrink: 0;
+}
+
+.userName {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userLevel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+.userXP {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ─── STATE PANEL ─── */
+/* Loading, error, and empty state — all use this single centered box */
 .statePanel {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  min-height: 10rem;
-  padding: var(--space-6);
-  background: var(--color-bg-card);
+  gap: var(--space-3);
+  padding: var(--space-12);
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
+  text-align: center;
+  flex-direction: column;
 }
 
 .spinner {
   animation: spin 0.8s linear infinite;
-}
-.tableRow {
-  display: flex; align-items: center; padding: var(--space-3) var(--space-5);
-  border-bottom: 1px solid var(--color-border-light);
-  transition: background var(--transition-fast);
-}
-.tableRow:last-child { border-bottom: none; }
-.tableRow:hover { background: var(--color-bg-card-hover); }
-.tableRowSelf { background: var(--color-primary-lightest); }
-:global(.dark) .tableRowSelf { background: rgba(129, 140, 248, 0.08); }
-
-.rank {
-  width: 3rem; font-family: var(--font-family-stats);
-  font-weight: var(--font-weight-bold); font-size: var(--font-size-small);
-  color: var(--color-text-tertiary); text-align: center; flex-shrink: 0;
-}
-.rankTop { color: var(--color-accent); }
-
-.userAvatar {
-  width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full);
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-size: var(--font-size-xsmall); font-weight: var(--font-weight-bold);
-  flex-shrink: 0; margin-right: var(--space-3);
-}
-.userName { font-weight: var(--font-weight-medium); font-size: var(--font-size-small); flex: 1; }
-.userLevel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); width: 4rem; text-align: center; }
-.userXP {
-  font-family: var(--font-family-stats); font-size: var(--font-size-small);
-  font-weight: var(--font-weight-semibold); color: var(--color-primary); width: 5rem; text-align: right;
+  color: var(--color-primary);
 }
 
-/* Dynamic route skeleton shown while the client-side Leaderboard bundle loads. */
+/* ─── DYNAMIC LOADING SKELETON (LeaderboardLoadingSkeleton.tsx) ─── */
 .loadingShell {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--color-bg-primary);
   padding: var(--space-8) var(--space-4) var(--space-16);
-}
-
-.skeletonShimmer {
-  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: var(--radius-lg);
+  max-width: 860px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: var(--space-8);
 }
 
 .loadingTitle {
-  width: min(15rem, 60%);
-  height: 2rem;
-  margin-bottom: var(--space-2);
+  height: 2.5rem; width: 50%; margin: 0 auto;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md);
 }
 
 .loadingSubtitle {
-  width: min(25rem, 75%);
-  height: 1rem;
-  margin-bottom: var(--space-8);
+  height: 1.25rem; width: 70%; margin: 0 auto;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md);
 }
 
 .loadingFilters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-bottom: var(--space-8);
+  display: flex; justify-content: center; gap: var(--space-2); flex-wrap: wrap;
 }
-
 .loadingFilter {
-  width: 5rem;
-  height: 2.25rem;
-  border-radius: var(--radius-full);
+  height: 2rem; width: 80px;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-lg);
 }
 
-.loadingPodium {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
+.loadingPodium { display: flex; gap: var(--space-4); align-items: flex-end; justify-content: center; }
 .loadingPodiumSide {
-  width: min(10rem, 28vw);
-  height: 11.25rem;
+  height: 160px; flex: 1; max-width: 150px;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-xl);
 }
-
 .loadingPodiumCenter {
-  width: min(11.25rem, 30vw);
-  height: 13.75rem;
+  height: 200px; flex: 1; max-width: 150px;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-xl);
 }
 
-.loadingRows {
-  display: grid;
-  gap: var(--space-2);
-}
-
+.loadingRows { display: flex; flex-direction: column; gap: var(--space-2); }
 .loadingRow {
   height: 3.5rem;
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-lg);
 }
 
-@media (max-width: 520px) {
-  .podium,
-  .loadingPodium {
-    gap: var(--space-2);
-  }
-
-  .podiumName,
-  .podiumXP {
-    max-width: 5.75rem;
-    text-align: center;
-  }
-
-  .tableRow {
-    padding-inline: var(--space-3);
-  }
-
-  .userLevel {
-    display: none;
-  }
+/* Generic shimmer — used for any element that needs skeleton loading */
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-secondary) 25%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-lg);
 }
