@@ -1,0 +1,142 @@
+/*
+ * FILE: Battle.module.css
+ * PURPOSE: Battle Arena page styles — matchmaking UI, battle stats, opponent
+ *          display, and route-local dynamic loading skeletons.
+ * USED BY: src/app/battle/page.tsx, BattleClient.tsx, and BattleLoadingSkeleton.tsx
+ */
+
+.page { padding: var(--space-8) 0 var(--space-16); }
+.inner { max-width: 720px; margin: 0 auto; padding: 0 var(--space-4); text-align: center; }
+
+.header { margin-bottom: var(--space-8); }
+.title { font-family: var(--font-family-heading); font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); margin-bottom: var(--space-2); }
+.subtitle { font-size: var(--font-size-body); color: var(--color-text-secondary); }
+
+/* Matchmaking card */
+.matchCard {
+  padding: var(--space-10); background: var(--color-bg-card);
+  border: 1px solid var(--color-border); border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg); margin-bottom: var(--space-8);
+}
+
+.vsRow { display: flex; align-items: center; justify-content: center; gap: var(--space-6); margin-bottom: var(--space-8); flex-wrap: wrap; }
+
+.player {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+}
+.playerAvatar {
+  width: 5rem; height: 5rem; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-family-heading); font-size: 1.5rem;
+  font-weight: var(--font-weight-bold); color: white;
+}
+.playerName { font-weight: var(--font-weight-semibold); font-size: var(--font-size-body); }
+.playerLevel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); }
+
+.vsText {
+  font-family: var(--font-family-heading); font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-extrabold); color: var(--color-danger);
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+/* Category selector */
+.categories {
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+  justify-content: center; margin-bottom: var(--space-6);
+}
+.categoryBtn {
+  padding: var(--space-2) var(--space-4); font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium); border-radius: var(--radius-full);
+  background: var(--color-bg-secondary); border: 1px solid var(--color-border);
+  color: var(--color-text-secondary); transition: all var(--transition-fast); cursor: pointer;
+}
+.categoryBtn:hover { border-color: var(--color-primary-lighter); color: var(--color-primary); }
+.categoryBtnActive { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+/* Start battle button */
+.startBtn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-4) var(--space-10);
+  background: linear-gradient(135deg, #EF4444, #F97316);
+  color: white; font-size: var(--font-size-h4); font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-xl); transition: all var(--transition-normal);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+.startBtn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(239, 68, 68, 0.4); }
+.startBtn:disabled { opacity: 0.72; cursor: wait; }
+
+.spinner { animation: spin 0.8s linear infinite; }
+
+.matchStatus {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  gap: var(--space-2); margin-top: var(--space-5); padding: var(--space-3);
+  border-radius: var(--radius-lg); font-size: var(--font-size-small);
+}
+.matchStatusSuccess { color: #047857; background: #ECFDF5; border: 1px solid #A7F3D0; }
+.matchStatusError { color: #B91C1C; background: #FEF2F2; border: 1px solid #FECACA; }
+.matchStatus code { font-family: var(--font-family-code); font-size: var(--font-size-xsmall); opacity: 0.75; }
+.matchStatus a { font-weight: var(--font-weight-semibold); text-decoration: underline; }
+
+/* Stats cards */
+.battleStats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-4);
+}
+
+.battleStatCard {
+  padding: var(--space-4); background: var(--color-bg-card);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+}
+.battleStatIcon {
+  width: 2.5rem; height: 2.5rem; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+}
+.battleStatValue {
+  font-family: var(--font-family-stats); font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+}
+.battleStatLabel { font-size: var(--font-size-xsmall); color: var(--color-text-tertiary); text-transform: uppercase; }
+
+/* Dynamic route skeleton shown while the client-side Battle bundle loads. */
+.loadingShell {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+.skeletonShimmer {
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-lg);
+}
+
+.loadingTitle {
+  width: min(18rem, 70%);
+  height: 2rem;
+  margin: 0 auto var(--space-2);
+}
+
+.loadingSubtitle {
+  width: min(26rem, 80%);
+  height: 1rem;
+  margin: 0 auto var(--space-8);
+}
+
+.loadingMatchCard {
+  width: 100%;
+  min-height: 17.5rem;
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-2xl);
+}
+
+.loadingStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-4);
+}
+
+.loadingStat {
+  min-height: 6.25rem;
+}
