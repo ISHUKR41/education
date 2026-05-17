@@ -1,0 +1,706 @@
+/*
+ * FILE: globals.css
+ * LOCATION: src/styles/globals.css
+ * PURPOSE: Global design system for the EduQuest platform. This is the single source
+ *          of truth for every visual decision — colors, typography, spacing, shadows,
+ *          animations, and base element resets. The dark theme (#0D1117 background,
+ *          #58A6FF electric blue accent) is the primary theme, inspired by GitHub Dark
+ *          and VS Code — familiar to students and easy on the eyes during long sessions.
+ * USED BY: src/app/layout.tsx — imported once, applies to every page.
+ * DEPENDENCIES: Tailwind CSS v4, @fontsource/space-grotesk, @fontsource/inter, @fontsource/jetbrains-mono
+ * LAST UPDATED: 2026-05-17
+ * AUTHOR NOTE: NEVER put page-specific styles here. Every page has its own CSS module.
+ *              Only global design tokens, resets, and shared utility classes live here.
+ */
+
+/* ============================================================
+ * SECTION 1: Tailwind CSS Import
+ * Loads all Tailwind utility classes. Must be first.
+ * ============================================================ */
+@import "tailwindcss";
+
+/* ============================================================
+ * SECTION 2: Self-Hosted Font Imports
+ * Fonts are bundled with the app — no external network requests.
+ * Space Grotesk = headings (modern, geometric, confidence)
+ * Inter = body text (most readable UI font ever designed)
+ * JetBrains Mono = code, stats, numbers (crisp and legible)
+ * ============================================================ */
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/600.css";
+
+/* ============================================================
+ * SECTION 3: CSS Custom Properties (Design Tokens)
+ * Dark theme is the PRIMARY theme — inspired by GitHub Dark.
+ * Electric blue accent (#58A6FF) creates energy and focus.
+ * All values follow the EduBattle Master Content Plan color spec.
+ * ============================================================ */
+:root {
+  /* ─── PRIMARY BRAND COLOR — Electric Blue ─── */
+  /* Used for: CTAs, highlights, links, active states, XP bars */
+  --color-primary: #58A6FF;
+  --color-primary-hover: #79BBFF;
+  --color-primary-dim: rgba(88, 166, 255, 0.15);
+  --color-primary-border: rgba(88, 166, 255, 0.3);
+
+  /* ─── SECONDARY COLOR — Violet/Purple ─── */
+  /* Used for: premium features, level badges, achievements */
+  --color-secondary: #BC8CFF;
+  --color-secondary-hover: #D2A8FF;
+  --color-secondary-dim: rgba(188, 140, 255, 0.15);
+
+  /* ─── ACCENT COLOR — Amber ─── */
+  /* Used for: streak fire, rewards, warnings, warm highlights */
+  --color-accent: #F0883E;
+  --color-accent-hover: #FFA657;
+  --color-accent-dim: rgba(240, 136, 62, 0.15);
+
+  /* ─── SUCCESS COLOR — Emerald Green ─── */
+  /* Used for: correct answers, level-up, positive states, streaks */
+  --color-success: #3FB950;
+  --color-success-hover: #56D364;
+  --color-success-dim: rgba(63, 185, 80, 0.15);
+  --color-success-border: rgba(63, 185, 80, 0.3);
+
+  /* ─── DANGER COLOR — Vivid Red ─── */
+  /* Used for: wrong answers, errors, destructive actions */
+  --color-danger: #F85149;
+  --color-danger-hover: #FF7B72;
+  --color-danger-dim: rgba(248, 81, 73, 0.15);
+
+  /* ─── WARNING COLOR — Amber ─── */
+  /* Used for: streak about to break, approaching deadlines */
+  --color-warning: #D29922;
+  --color-warning-hover: #E3B341;
+  --color-warning-dim: rgba(210, 153, 34, 0.15);
+
+  /* ─── BACKGROUND COLORS (Dark Layer System) ─── */
+  /* Deep navy → card → elevated card → hover state */
+  --color-bg-primary: #0D1117;      /* Page background — deep dark navy */
+  --color-bg-secondary: #161B22;    /* Card backgrounds — slightly lighter */
+  --color-bg-tertiary: #21262D;     /* Elevated elements — dropdowns, modals */
+  --color-bg-elevated: #30363D;     /* Hover states, active tabs */
+  --color-bg-overlay: rgba(1, 4, 9, 0.8); /* Modal backdrop */
+
+  /* ─── TEXT COLORS ─── */
+  --color-text-primary: #E6EDF3;    /* Main text — off-white, easy on eyes */
+  --color-text-secondary: #8B949E;  /* Supplementary text — muted gray */
+  --color-text-tertiary: #6E7681;   /* Placeholders, timestamps */
+  --color-text-inverse: #0D1117;    /* Text on light/colored backgrounds */
+  --color-text-link: #58A6FF;       /* Link color = primary */
+
+  /* ─── BORDER COLORS ─── */
+  --color-border: #30363D;          /* Default borders — subtle separation */
+  --color-border-light: #21262D;    /* Very subtle borders */
+  --color-border-strong: #484F58;   /* Emphasized borders */
+  --color-border-focus: #58A6FF;    /* Focus ring = primary blue */
+
+  /* ─── TYPOGRAPHY ─── */
+  /* Space Grotesk for headings — modern, geometric, confident */
+  --font-heading: "Space Grotesk", "Inter", system-ui, -apple-system, sans-serif;
+  /* Inter for body — most readable UI font, excellent at any size */
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  /* JetBrains Mono for code, stats, scores — crisp monospace */
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, monospace;
+
+  /* Font size scale — 8-point grid as per MCP typography spec */
+  --text-display: clamp(2.5rem, 5vw + 1rem, 3.5rem); /* Hero headlines */
+  --text-h1: clamp(1.875rem, 3vw + 0.5rem, 2.5rem);  /* Page titles */
+  --text-h2: clamp(1.5rem, 2vw + 0.5rem, 1.875rem);  /* Section titles */
+  --text-h3: clamp(1.25rem, 1.5vw + 0.25rem, 1.5rem); /* Card titles */
+  --text-h4: 1.125rem;   /* 18px — subsection titles */
+  --text-body: 1rem;     /* 16px — default reading size */
+  --text-sm: 0.875rem;   /* 14px — labels, captions */
+  --text-xs: 0.75rem;    /* 12px — timestamps, fine print */
+
+  /* Font weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Line heights */
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.7;
+
+  /* ─── SPACING SCALE (8-point grid) ─── */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px — standard */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* ─── BORDER RADIUS ─── */
+  --radius-sm: 0.375rem;   /* 6px — subtle */
+  --radius-md: 0.5rem;     /* 8px — standard */
+  --radius-lg: 0.75rem;    /* 12px — cards, buttons */
+  --radius-xl: 1rem;       /* 16px — large cards */
+  --radius-2xl: 1.5rem;    /* 24px — hero sections */
+  --radius-full: 9999px;   /* Pills, avatars, badges */
+
+  /* ─── SHADOWS (dark-theme optimized) ─── */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
+  --shadow-glow-blue: 0 0 20px rgba(88, 166, 255, 0.25);
+  --shadow-glow-green: 0 0 20px rgba(63, 185, 80, 0.25);
+  --shadow-glow-purple: 0 0 20px rgba(188, 140, 255, 0.25);
+  --shadow-glow-amber: 0 0 20px rgba(240, 136, 62, 0.25);
+
+  /* ─── TRANSITIONS ─── */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ─── Z-INDEX SCALE ─── */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+
+  /* ─── LAYOUT ─── */
+  --navbar-height: 4rem;           /* 64px — sticky navbar height */
+  --max-width: 80rem;              /* 1280px — max content width */
+  --max-reading-width: 48rem;      /* 768px — optimal reading width */
+  --section-padding-x: clamp(1rem, 5vw, 4rem);  /* Responsive horizontal padding */
+  --section-padding-y: clamp(3rem, 8vw, 6rem);  /* Responsive vertical padding */
+
+  /* ─── GLASSMORPHISM ─── */
+  --glass-bg: rgba(22, 27, 34, 0.85);
+  --glass-border: rgba(48, 54, 61, 0.8);
+  --glass-blur: blur(12px);
+}
+
+/* ============================================================
+ * SECTION 4: Base Reset & Global Element Styles
+ * Clean slate — then apply design tokens.
+ * ============================================================ */
+
+/* Apply box-sizing to all elements for predictable layouts */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Smooth scroll for anchor jumps */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Prevent font size inflation on mobile landscape */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Body — dark background, Inter body font, proper line height */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  /* Prevent horizontal scroll caused by overflow elements */
+  overflow-x: hidden;
+  /* Smooth theme transitions */
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* ─── HEADING TYPOGRAPHY ─── */
+/* All headings use Space Grotesk for a modern, confident look */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  color: var(--color-text-primary);
+  /* Avoid orphaned words in headings */
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-h1); }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); }
+h4 { font-size: var(--text-h4); }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.875rem; }
+
+/* ─── PARAGRAPH & BODY TEXT ─── */
+p {
+  color: var(--color-text-secondary);
+  line-height: var(--lh-relaxed);
+  /* Balanced text wrapping prevents awkward single-word last lines */
+  text-wrap: pretty;
+}
+
+/* ─── LINKS ─── */
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* ─── CODE & MONOSPACE ─── */
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.9em; /* Slightly smaller so mono doesn't look huge next to body */
+}
+
+pre {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  overflow-x: auto;
+}
+
+code:not(pre code) {
+  /* Inline code — subtle highlight */
+  background-color: var(--color-bg-elevated);
+  color: var(--color-accent-hover, #FFA657);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+}
+
+/* ─── IMAGES ─── */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ─── FORM ELEMENTS RESET ─── */
+input, button, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ─── HORIZONTAL RULE ─── */
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ─── LISTS ─── */
+ul, ol {
+  list-style: none;
+}
+
+/* ============================================================
+ * SECTION 5: Custom Scrollbar
+ * Styled to match the dark theme — subtle, not distracting.
+ * ============================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-strong);
+}
+
+/* ============================================================
+ * SECTION 6: Selection & Focus Styles
+ * Professional focus rings for keyboard navigation.
+ * ============================================================ */
+
+/* Text selection — uses primary blue */
+::selection {
+  background-color: rgba(88, 166, 255, 0.3);
+  color: var(--color-text-primary);
+}
+
+/* Keyboard focus ring — visible blue outline, skip for mouse clicks */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove focus ring for mouse interactions */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================================
+ * SECTION 7: Layout Utility Classes
+ * Reusable layout patterns used across multiple pages.
+ * These are the ONLY exceptions to the "no page styles here" rule.
+ * ============================================================ */
+
+/* Container — max width with auto side margins */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--section-padding-x);
+}
+
+/* Section wrapper — consistent vertical rhythm between sections */
+.section {
+  padding: var(--section-padding-y) var(--section-padding-x);
+}
+
+/* Visually hidden — accessible but hidden from visual display */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+ * SECTION 8: Shared Component Tokens
+ * Reusable "atom" styles used across many different components.
+ * ============================================================ */
+
+/* Badge — small pill labels */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.2rem var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge-primary {
+  background-color: var(--color-primary-dim);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-border);
+}
+
+.badge-success {
+  background-color: var(--color-success-dim);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+}
+
+.badge-danger {
+  background-color: var(--color-danger-dim);
+  color: var(--color-danger);
+}
+
+.badge-warning {
+  background-color: var(--color-warning-dim);
+  color: var(--color-warning);
+}
+
+/* Glass card — used across many sections */
+.glass-card {
+  background-color: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+}
+
+/* ============================================================
+ * SECTION 9: Keyframe Animations
+ * All animation definitions for use across the platform.
+ * ============================================================ */
+
+/* Fade in from slightly below — used for cards entering viewport */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Simple fade in — used for overlays and modals */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Gentle floating — used for hero illustrations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Pulse glow — used for XP bars and achievement highlights */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(88, 166, 255, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(88, 166, 255, 0.5); }
+}
+
+/* Shimmer — for skeleton loading screens */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Spin — for loading spinners */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Scale bounce — for correct answer celebrations */
+@keyframes scaleBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Slide in from right — for toast notifications */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide in from bottom — for mobile drawers */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Streak fire pulse — for active streak display */
+@keyframes firePulse {
+  0%, 100% { transform: scale(1) rotate(-5deg); }
+  50% { transform: scale(1.1) rotate(5deg); }
+}
+
+/* Animation utility classes — apply any animation quickly */
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-secondary) 25%,
+    var(--color-bg-tertiary) 50%,
+    var(--color-bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-scale-bounce {
+  animation: scaleBounce 0.4s ease-out;
+}
+
+/* Stagger animation delay helpers — for lists of cards */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* ============================================================
+ * SECTION 10: Shared Input & Button Styles
+ * Base styles for form elements across auth, search, and quiz pages.
+ * ============================================================ */
+
+/* Base input — used by sign-in, sign-up, search, community forms */
+.input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-primary);
+  font-size: var(--text-body);
+  font-family: var(--font-body);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-dim);
+}
+
+/* Base button — primary CTA */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background-color: var(--color-primary);
+  color: #0D1117;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Ghost / outline button */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--fw-medium);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-border-strong);
+}
+
+/* ============================================================
+ * SECTION 11: Skeleton Loading Screens
+ * Skeleton elements prevent blank-screen flashes during data loading.
+ * Use these instead of spinners for a polished, perceived-fast UX.
+ * ============================================================ */
+
+/* Base skeleton element — applies shimmer animation */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-secondary) 25%,
+    var(--color-bg-tertiary) 50%,
+    var(--color-bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* Common skeleton shapes */
+.skeleton-text {
+  height: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card {
+  height: 200px;
+  border-radius: var(--radius-xl);
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
